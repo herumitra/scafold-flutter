@@ -15,7 +15,8 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
-## Struktur Folder
+### Struktur Folder
+<div class="highlight highlight-source-dart position-relative" data-snippet-clipboard-copy-content="
 lib/
 ├── src/
 │   ├── config/                # Konfigurasi aplikasi (misalnya API, konfigurasi global)
@@ -47,3 +48,4 @@ lib/
 │   ├── widget_test.dart
 │   └── unit_test.dart
 pubspec.yaml                  # File konfigurasi proyek
+">
