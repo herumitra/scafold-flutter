@@ -16,7 +16,7 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 
 ### Struktur Folder
-
+```
 lib/
 ├── src/
 │   ├── config/                # Konfigurasi aplikasi (misalnya API, konfigurasi global)
@@ -48,3 +48,4 @@ lib/
 │   ├── widget_test.dart
 │   └── unit_test.dart
 pubspec.yaml                  # File konfigurasi proyek
+```
