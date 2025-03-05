@@ -26,7 +26,6 @@ dependencies:
   shared_preferences: ^2.5.1
   websafe_svg: ^3.0.1+10
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -40,3 +39,8 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+  - assets/
+  - assets/icons/
+  - assets/images/
