@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class MasterSupplierProdukItem extends StatelessWidget {
+  const MasterSupplierProdukItem({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(

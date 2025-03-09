@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class LaporanLabaRugiItem extends StatelessWidget {
+  const LaporanLabaRugiItem({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(

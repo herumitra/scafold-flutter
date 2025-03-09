@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class MasterKonversiSatuanItem extends StatelessWidget {
+  const MasterKonversiSatuanItem({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(

@@ -21,6 +21,8 @@ import '../items/master_supplier_produk_item.dart';
 import '../items/profile_item.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }

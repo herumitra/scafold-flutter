@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import '../utils/constants.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class CustomMenu extends StatefulWidget {
   final Function(String) onMenuSelected;
   final String? selectedMenu;
 
-  const CustomMenu({Key? key, required this.onMenuSelected, this.selectedMenu})
-    : super(key: key);
+  const CustomMenu({
+    super.key,
+    required this.onMenuSelected,
+    this.selectedMenu,
+  });
 
   @override
   _CustomMenuState createState() => _CustomMenuState();
@@ -15,7 +19,7 @@ class CustomMenu extends StatefulWidget {
 
 class _CustomMenuState extends State<CustomMenu> {
   final SideMenuController _sideMenuController = SideMenuController();
-  Map<String, bool> _expandedMenus = {};
+  final Map<String, bool> _expandedMenus = {};
 
   @override
   Widget build(BuildContext context) {
@@ -61,34 +65,37 @@ class _CustomMenuState extends State<CustomMenu> {
 
   List<SideMenuItem> _buildMenuItems() {
     return [
-      _buildMenuItem('Dashboard', 'assets/icons/dashboard.png'),
-      ..._buildExpandableMenu('Transaksi', 'assets/icons/transaksi.png', [
-        _buildSubMenu('Pembelian'),
-        _buildSubMenu('Penjualan'),
-        _buildSubMenu('Penerimaan'),
-        _buildSubMenu('Retur Pembelian'),
-        _buildSubMenu('Retur Penjualan'),
+      _buildMenuItem('Dashboard', HugeIcons.strokeRoundedDashboardSquare03),
+      ..._buildExpandableMenu('Transaksi', HugeIcons.strokeRoundedCalculate, [
+        _buildMenuItem('Penjualan', HugeIcons.strokeRoundedCashier02),
+        _buildMenuItem('Retur Penjualan', HugeIcons.strokeRoundedFolderSync),
+        _buildMenuItem('Pembelian', HugeIcons.strokeRoundedCalendarAdd02),
+        _buildMenuItem('Penerimaan', HugeIcons.strokeRoundedCalendarCheckIn01),
+        _buildMenuItem(
+          'Retur Pembelian',
+          HugeIcons.strokeRoundedCalendarCheckOut01,
+        ),
       ]),
-      ..._buildExpandableMenu('Laporan', 'assets/icons/laporan.png', [
+      ..._buildExpandableMenu('Laporan', HugeIcons.strokeRoundedAssignments, [
         _buildSubMenu('Laporan Penjualan'),
         _buildSubMenu('Belanja & Pengeluaran'),
         _buildSubMenu('Laba Rugi'),
       ]),
-      ..._buildExpandableMenu('Master', 'assets/icons/master.png', [
+      ..._buildExpandableMenu('Master', HugeIcons.strokeRoundedArchive02, [
         _buildSubMenu('Satuan'),
         _buildSubMenu('Konversi Satuan'),
         _buildSubMenu('Kategori Produk'),
         _buildSubMenu('Kategori Member'),
         _buildSubMenu('Kategori Supplier'),
         _buildSubMenu('Produk'),
-        _buildSubMenu('Member'),
-        _buildSubMenu('Supplier'),
         _buildSubMenu('Supplier Produk'),
       ]),
-      _buildMenuItem('Profile', 'assets/icons/profile.png'),
+      _buildMenuItem('Member', HugeIcons.strokeRoundedContactBook),
+      _buildMenuItem('Supplier', HugeIcons.strokeRoundedAudit01),
+      _buildMenuItem('Profile', HugeIcons.strokeRoundedComputerVideoCall),
       SideMenuItem(
         title: 'Logout',
-        iconWidget: const Icon(Icons.logout, color: Colors.red),
+        iconWidget: const Icon(HugeIcons.strokeRoundedAccess),
         onTap: (_, __) {
           // Tambahkan logika logout di sini
         },
@@ -96,15 +103,10 @@ class _CustomMenuState extends State<CustomMenu> {
     ];
   }
 
-  SideMenuItem _buildMenuItem(String title, String assetPath) {
+  SideMenuItem _buildMenuItem(String title, IconData icon) {
     return SideMenuItem(
       title: title,
-      iconWidget: Image.asset(
-        assetPath,
-        width: 24,
-        height: 24,
-        fit: BoxFit.contain,
-      ),
+      iconWidget: Icon(icon, size: 24), // Pakai HugeIcons
       onTap: (_, __) {
         widget.onMenuSelected(title);
       },
@@ -113,7 +115,7 @@ class _CustomMenuState extends State<CustomMenu> {
 
   List<SideMenuItem> _buildExpandableMenu(
     String title,
-    String assetPath,
+    IconData icon,
     List<SideMenuItem> subMenus,
   ) {
     bool isExpanded = _expandedMenus[title] ?? false;
@@ -121,12 +123,7 @@ class _CustomMenuState extends State<CustomMenu> {
     return [
       SideMenuItem(
         title: title,
-        iconWidget: Image.asset(
-          assetPath,
-          width: 24,
-          height: 24,
-          fit: BoxFit.contain,
-        ),
+        iconWidget: Icon(icon, size: 24), // Pakai HugeIcons
         onTap: (_, __) {
           setState(() {
             _expandedMenus.updateAll((key, value) => false);

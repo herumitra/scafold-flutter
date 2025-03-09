@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class LaporanPenjualanItem extends StatelessWidget {
+  const LaporanPenjualanItem({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(

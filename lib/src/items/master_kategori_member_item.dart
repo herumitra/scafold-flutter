@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class MasterKategoriMemberItem extends StatelessWidget {
+  const MasterKategoriMemberItem({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(

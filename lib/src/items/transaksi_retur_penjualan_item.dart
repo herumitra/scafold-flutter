@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class TransaksiReturPenjualanItem extends StatelessWidget {
+  const TransaksiReturPenjualanItem({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(
