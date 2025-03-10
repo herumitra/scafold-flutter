@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import '../utils/constants.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:clay_containers/clay_containers.dart';
 
 class CustomMenu extends StatefulWidget {
   final Function(String) onMenuSelected;
@@ -27,10 +28,18 @@ class _CustomMenuState extends State<CustomMenu> {
       controller: _sideMenuController,
       style: SideMenuStyle(
         backgroundColor: ViColors.mainDefault,
+        openSideMenuWidth: 250.0,
+        itemBorderRadius: BorderRadius.circular(20),
         hoverColor: ViColors.hoverMenu,
         selectedHoverColor: ViColors.hoverMenu,
         selectedColor: ViColors.mainDefault,
         unselectedIconColor: ViColors.mainDefault,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(15),
+            bottomLeft: Radius.circular(15),
+          ),
+        ),
         selectedTitleTextStyle: ViDefaultFont.copyWith(
           fontSize: ViSize.defaultFontSize,
           fontWeight: FontWeight.bold,
