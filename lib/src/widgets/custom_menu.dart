@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import '../utils/constants.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:clay_containers/clay_containers.dart';
 
 class CustomMenu extends StatefulWidget {
   final Function(String) onMenuSelected;

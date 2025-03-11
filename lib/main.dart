@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vimedika/src/screens/home_screen.dart';
+import 'package:vimedika/src/screens/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,8 +13,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Vimedika',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: HomeScreen(),
+      theme: ThemeData(primarySwatch: Colors.lightGreen),
+      home: const SplashScreen(),
     );
   }
 }
