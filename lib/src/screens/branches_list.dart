@@ -12,6 +12,8 @@ class BranchesScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Daftar Cabang / Outlet',style: TextStyle(fontWeight: FontWeight.bold, color: ViColors.whiteColor)),
         backgroundColor: ViColors.mainDefault,
+        centerTitle: true,
+        automaticallyImplyLeading: false
       ),
       body: ListView.builder(
         itemCount: branches.length,

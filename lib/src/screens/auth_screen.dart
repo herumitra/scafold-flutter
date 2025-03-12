@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:animated_login/animated_login.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:secure_application/secure_application.dart';
+import 'package:page_transition/page_transition.dart';
 import '../utils/constants.dart';
 import '../screens/branches_list.dart';
 
@@ -10,89 +12,95 @@ class AuthScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: AnimatedLogin(
-        onLogin: (data) => _loginUser(context, data),
-        onSignup: _registerUser,
-        showForgotPassword: false,
-        validateEmail: false,
-        loginTexts: LoginTexts(
-          loginFormTitle: 'VIMEDIKA Login',
-          forgotPassword: '',
-          loginEmailHint: 'Username',
-          nameHint: 'Nama Lengkap',
-          signupEmailHint: 'Username',
-          welcomeBackDescription:
-              'Please contact us if you encounter any issues at support@vimedika.com',
-          privacyPolicyLink: 'http://vimedika.com',
-          termsConditionsLink: 'http://vimedika.com',
-        ),
-        logo: Image.asset(
-          'assets/images/ziida.png',
-        ),
-        emailValidator: ValidatorModel(
-          validatorCallback: (value) {
-            if (value == null || value.isEmpty) return 'Username wajib diisi';
-            return '';
-          },
-        ),
-        passwordValidator: ValidatorModel(
-          validatorCallback: (value) {
-            if (value == null || value.length < 6) return 'Minimal 6 karakter';
-            return '';
-          },
-        ),
-        loginDesktopTheme: LoginViewTheme(
-          logoSize: const Size(200, 200),
-          nameIcon: Icon(Icons.perm_contact_cal_outlined, color: ViColors.mainDefault),
-          emailIcon: Icon(Icons.perm_identity, color: ViColors.mainDefault),
-          passwordIcon: Icon(Icons.lock_outline, color: ViColors.mainDefault),          
-          backgroundColor: ViColors.mainDefault,
-          formFieldBackgroundColor: Colors.white,
-          formTitleStyle: TextStyle(
-            color: ViColors.mainDefault,
-            fontWeight: FontWeight.bold,
-            fontSize: 35,
+    return SecureApplication(
+      child: Scaffold(
+        body: AnimatedLogin(
+          onLogin: (data) => _loginUser(context, data),
+          onSignup: _registerUser,
+          showForgotPassword: false,
+          validateEmail: false,
+          loginTexts: LoginTexts(
+            loginFormTitle: 'VIMEDIKA Login',
+            forgotPassword: '',
+            loginEmailHint: 'Username',
+            nameHint: 'Nama Lengkap',
+            signupEmailHint: 'Username',
+            welcomeBackDescription:
+                'Please contact us if you encounter any issues at support@vimedika.com',
+            privacyPolicyLink: 'http://vimedika.com',
+            termsConditionsLink: 'http://vimedika.com',
           ),
-          changeActionButtonStyle: ButtonStyle(
-            backgroundColor: WidgetStateProperty.all(ViColors.whiteColor),
-            foregroundColor: WidgetStateProperty.all(ViColors.mainDefault),
-            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(35.0),
-                side: BorderSide(color: ViColors.mainDefault),
+          logo: Image.asset(
+            'assets/images/ziida.png',
+          ),
+          emailValidator: ValidatorModel(
+            validatorCallback: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Username wajib diisi';
+              }
+              return '';
+            },
+          ),
+          passwordValidator: ValidatorModel(
+            validatorCallback: (value) {
+              if (value == null || value.length < 6) {
+                return 'Minimal 6 karakter';
+              }
+              return '';
+            },
+          ),
+          loginDesktopTheme: LoginViewTheme(
+            logoSize: const Size(200, 200),
+            nameIcon: Icon(Icons.perm_contact_cal_outlined, color: ViColors.mainDefault),
+            emailIcon: Icon(Icons.perm_identity, color: ViColors.mainDefault),
+            passwordIcon: Icon(Icons.lock_outline, color: ViColors.mainDefault),
+            backgroundColor: ViColors.mainDefault,
+            formFieldBackgroundColor: Colors.white,
+            formTitleStyle: TextStyle(
+              color: ViColors.mainDefault,
+              fontWeight: FontWeight.bold,
+              fontSize: 35,
+            ),
+            changeActionButtonStyle: ButtonStyle(
+              backgroundColor: WidgetStateProperty.all(ViColors.whiteColor),
+              foregroundColor: WidgetStateProperty.all(ViColors.mainDefault),
+              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(35.0),
+                  side: BorderSide(color: ViColors.mainDefault),
+                ),
+              ),
+            ),
+            actionButtonStyle: ButtonStyle(
+              backgroundColor: WidgetStateProperty.all(ViColors.mainDefault),
+              foregroundColor: WidgetStateProperty.all(ViColors.whiteColor),
+              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(35.0),
+                  side: BorderSide(color: ViColors.mainDefault),
+                ),
               ),
             ),
           ),
-          actionButtonStyle: ButtonStyle(
-            backgroundColor: WidgetStateProperty.all(ViColors.mainDefault),
-            foregroundColor: WidgetStateProperty.all(ViColors.whiteColor),
-            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(35.0),
-                side: BorderSide(color: ViColors.mainDefault),
-              ),
+          loginMobileTheme: LoginViewTheme(
+            logoSize: const Size(125, 125),
+            nameIcon: Icon(Icons.perm_contact_cal_outlined, color: ViColors.mainDefault),
+            emailIcon: Icon(Icons.perm_identity, color: ViColors.mainDefault),
+            passwordIcon: Icon(Icons.lock_outline, color: ViColors.mainDefault),
+            backgroundColor: ViColors.mainDefault,
+            formFieldBackgroundColor: Colors.white,
+            formTitleStyle: TextStyle(
+              color: ViColors.mainDefault,
+              fontWeight: FontWeight.bold,
             ),
-          ),
-        ),
-        loginMobileTheme: LoginViewTheme(
-          logoSize: const Size(125, 125),          
-          nameIcon: Icon(Icons.perm_contact_cal_outlined, color: ViColors.mainDefault),
-          emailIcon: Icon(Icons.perm_identity, color: ViColors.mainDefault),
-          passwordIcon: Icon(Icons.lock_outline, color: ViColors.mainDefault),          
-          backgroundColor: ViColors.mainDefault,
-          formFieldBackgroundColor: Colors.white,
-          formTitleStyle: TextStyle(
-            color: ViColors.mainDefault,
-            fontWeight: FontWeight.bold,
-          ),
-          actionButtonStyle: ButtonStyle(
-            backgroundColor: WidgetStateProperty.all(ViColors.whiteColor),
-            foregroundColor: WidgetStateProperty.all(ViColors.mainDefault),
-            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(35.0),
-                side: BorderSide(color: ViColors.whiteColor),
+            actionButtonStyle: ButtonStyle(
+              backgroundColor: WidgetStateProperty.all(ViColors.whiteColor),
+              foregroundColor: WidgetStateProperty.all(ViColors.mainDefault),
+              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(35.0),
+                  side: BorderSide(color: ViColors.whiteColor),
+                ),
               ),
             ),
           ),
@@ -110,7 +118,9 @@ class AuthScreen extends StatelessWidget {
           "username": data.email,
           "password": data.password,
         },
-        options: Options(headers: {"Content-Type": "application/json"}),
+        options: Options(
+          headers: {"Content-Type": "application/json"},
+        ),
       );
 
       if (response.data['status'] == 'success') {
@@ -118,8 +128,6 @@ class AuthScreen extends StatelessWidget {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', token);
         debugPrint('Login sukses, token disimpan: $token');
-
-        // Setelah token tersimpan, ambil daftar cabang
         _fetchBranches(context, token);
         return null;
       } else {
@@ -128,7 +136,7 @@ class AuthScreen extends StatelessWidget {
       }
     } catch (e) {
       _showErrorDialog(context, 'Terjadi kesalahan, coba lagi.');
-      return 'Terjadi kesalahan, coba lagi.';
+      return 'Terjadi kesalahan, coba lagi';
     }
   }
 
@@ -139,15 +147,14 @@ class AuthScreen extends StatelessWidget {
         'http://vimedika.com:4001/list_branches',
         options: Options(headers: {"Authorization": "Bearer $token"}),
       );
-
-      if (response.statusCode == 200 && response.data['status'] == 'success') {
+      if (response.statusCode == 200) {
         final branches = response.data['data'];
-        
-        // Arahkan ke halaman daftar branches
-        Navigator.pushReplacement(
+        Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => BranchesScreen(branches: branches),
+          PageTransition(
+            type: PageTransitionType.fade,
+            duration: const Duration(milliseconds: 500),
+            child: BranchesScreen(branches: branches),
           ),
         );
       } else {
