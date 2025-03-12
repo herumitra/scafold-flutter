@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animated_login/animated_login.dart';
-import 'package:vimedika/src/utils/constants.dart';
+import '../utils/constants.dart';
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
@@ -12,15 +12,20 @@ class AuthScreen extends StatelessWidget {
         onLogin: _loginUser,
         onSignup: _registerUser,
         showForgotPassword: false,
-        // signUpMode: SignUpModes.disabled,
         validateEmail: false,
         loginTexts: LoginTexts(
           loginFormTitle: 'VIMEDIKA Login',
-          signUpFormTitle: 'Buat Akun Baru',
           forgotPassword: '',
           loginEmailHint: 'Username',
-        ), // Supaya tombol lupa password tidak muncul
-        logo: Image.asset('assets/images/ziida.png', width: 100, height: 100),
+          nameHint: 'Nama Lengkap',
+          signupEmailHint: 'Username',
+          welcomeBackDescription: 'Please contact us if you encounter any issues at support@vimedika.com',
+          privacyPolicyLink: 'http://vimedika.com',
+          termsConditionsLink: 'http://vimedika.com'
+        ), 
+        logo: Image.asset(
+            'assets/images/ziida.png',
+          ),
         emailValidator: ValidatorModel(
           validatorCallback: (value) {
             if (value == null || value.isEmpty) return 'Username wajib diisi';
@@ -34,13 +39,27 @@ class AuthScreen extends StatelessWidget {
           },
         ),
         loginDesktopTheme: LoginViewTheme(
-          emailIcon: Icon(Icons.person, color: ViColors.mainDefault),
-          passwordIcon: Icon(Icons.lock, color: ViColors.mainDefault),
+          logoSize: Size(200, 200),
+          nameIcon: Icon(Icons.perm_contact_cal_outlined, color: ViColors.mainDefault),
+          emailIcon: Icon(Icons.perm_identity, color: ViColors.mainDefault),
+          passwordIcon: Icon(Icons.lock_outline, color: ViColors.mainDefault),          
           backgroundColor: ViColors.mainDefault,
           formFieldBackgroundColor: Colors.white,
           formTitleStyle: TextStyle(
             color: ViColors.mainDefault,
             fontWeight: FontWeight.bold,
+            fontSize: 35
+          ),
+          changeActionButtonStyle: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(ViColors.whiteColor),
+            foregroundColor: MaterialStateProperty.all(ViColors.mainDefault),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(35.0),
+                side: BorderSide(color: ViColors.mainDefault),
+              ),
+            ),
+          
           ),
           actionButtonStyle: ButtonStyle(
             backgroundColor: MaterialStateProperty.all(ViColors.mainDefault),
@@ -54,8 +73,10 @@ class AuthScreen extends StatelessWidget {
           ),
         ),
         loginMobileTheme: LoginViewTheme(
-          emailIcon: Icon(Icons.person, color: ViColors.mainDefault),
-          passwordIcon: Icon(Icons.lock, color: ViColors.mainDefault),
+          logoSize: Size(125, 125),          
+          nameIcon: Icon(Icons.perm_contact_cal_outlined, color: ViColors.mainDefault),
+          emailIcon: Icon(Icons.perm_identity, color: ViColors.mainDefault),
+          passwordIcon: Icon(Icons.lock_outline, color: ViColors.mainDefault),          
           backgroundColor: ViColors.mainDefault,
           formFieldBackgroundColor: Colors.white,
           formTitleStyle: TextStyle(

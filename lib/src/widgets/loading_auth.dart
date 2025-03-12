@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class LoadingIndicator extends StatelessWidget {
   /// Loading indicator widget to show in processes.
-  const LoadingIndicator({Key? key}) : super(key: key);
+  const LoadingIndicator({super.key});
 
   @override
   Widget build(BuildContext context) => Container(
