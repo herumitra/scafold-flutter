@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _checkAuth() async {
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('tokenJWT');
+    final token = prefs.getString('token');
     final profile = prefs.getString('profileData');
 
     if (token == null || profile == null) {

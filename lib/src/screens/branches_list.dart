@@ -62,7 +62,7 @@ class _HoverableBranchItemState extends State<HoverableBranchItem> {
   Future<void> _setBranch(BuildContext context) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('tokenJWT'); // Ambil token yang tersimpan
+      final token = prefs.getString('token'); // Ambil token yang tersimpan
 
       if (token == null || token.isEmpty) {
         _showErrorDialog(context, 'Token tidak ditemukan. Harap login ulang.');
@@ -81,10 +81,10 @@ class _HoverableBranchItemState extends State<HoverableBranchItem> {
       );
 
       if (response.statusCode == 200 && response.data['status'] == 'success') {
-        final newToken = response.data['data']; // Token baru dari respons
+        final newToken = response.data['token']; // Token baru dari respons
 
         // Simpan token baru ke SharedPreferences
-        await prefs.setString('tokenJWT', newToken);
+        await prefs.setString('token', newToken);
 
         // Ambil data profil dengan token baru
         await _fetchProfile(context, newToken);
