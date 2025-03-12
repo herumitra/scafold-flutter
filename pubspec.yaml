@@ -56,6 +56,7 @@ dependencies:
   delayed_display: ^2.0.0
   graphic: ^2.5.1
   clay_containers: ^0.3.4
+  jwt_decoder: ^2.0.1
 
 dev_dependencies:
   flutter_test:

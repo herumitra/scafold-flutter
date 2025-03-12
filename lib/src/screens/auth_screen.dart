@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:animated_login/animated_login.dart';
+import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/constants.dart';
+import '../screens/branches_list.dart';
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
@@ -9,7 +12,7 @@ class AuthScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: AnimatedLogin(
-        onLogin: _loginUser,
+        onLogin: (data) => _loginUser(context, data),
         onSignup: _registerUser,
         showForgotPassword: false,
         validateEmail: false,
@@ -19,13 +22,14 @@ class AuthScreen extends StatelessWidget {
           loginEmailHint: 'Username',
           nameHint: 'Nama Lengkap',
           signupEmailHint: 'Username',
-          welcomeBackDescription: 'Please contact us if you encounter any issues at support@vimedika.com',
+          welcomeBackDescription:
+              'Please contact us if you encounter any issues at support@vimedika.com',
           privacyPolicyLink: 'http://vimedika.com',
-          termsConditionsLink: 'http://vimedika.com'
-        ), 
+          termsConditionsLink: 'http://vimedika.com',
+        ),
         logo: Image.asset(
-            'assets/images/ziida.png',
-          ),
+          'assets/images/ziida.png',
+        ),
         emailValidator: ValidatorModel(
           validatorCallback: (value) {
             if (value == null || value.isEmpty) return 'Username wajib diisi';
@@ -39,7 +43,7 @@ class AuthScreen extends StatelessWidget {
           },
         ),
         loginDesktopTheme: LoginViewTheme(
-          logoSize: Size(200, 200),
+          logoSize: const Size(200, 200),
           nameIcon: Icon(Icons.perm_contact_cal_outlined, color: ViColors.mainDefault),
           emailIcon: Icon(Icons.perm_identity, color: ViColors.mainDefault),
           passwordIcon: Icon(Icons.lock_outline, color: ViColors.mainDefault),          
@@ -48,23 +52,22 @@ class AuthScreen extends StatelessWidget {
           formTitleStyle: TextStyle(
             color: ViColors.mainDefault,
             fontWeight: FontWeight.bold,
-            fontSize: 35
+            fontSize: 35,
           ),
           changeActionButtonStyle: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(ViColors.whiteColor),
-            foregroundColor: MaterialStateProperty.all(ViColors.mainDefault),
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            backgroundColor: WidgetStateProperty.all(ViColors.whiteColor),
+            foregroundColor: WidgetStateProperty.all(ViColors.mainDefault),
+            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(35.0),
                 side: BorderSide(color: ViColors.mainDefault),
               ),
             ),
-          
           ),
           actionButtonStyle: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(ViColors.mainDefault),
-            foregroundColor: MaterialStateProperty.all(ViColors.whiteColor),
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            backgroundColor: WidgetStateProperty.all(ViColors.mainDefault),
+            foregroundColor: WidgetStateProperty.all(ViColors.whiteColor),
+            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(35.0),
                 side: BorderSide(color: ViColors.mainDefault),
@@ -73,7 +76,7 @@ class AuthScreen extends StatelessWidget {
           ),
         ),
         loginMobileTheme: LoginViewTheme(
-          logoSize: Size(125, 125),          
+          logoSize: const Size(125, 125),          
           nameIcon: Icon(Icons.perm_contact_cal_outlined, color: ViColors.mainDefault),
           emailIcon: Icon(Icons.perm_identity, color: ViColors.mainDefault),
           passwordIcon: Icon(Icons.lock_outline, color: ViColors.mainDefault),          
@@ -84,9 +87,9 @@ class AuthScreen extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
           actionButtonStyle: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(ViColors.whiteColor),
-            foregroundColor: MaterialStateProperty.all(ViColors.mainDefault),
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            backgroundColor: WidgetStateProperty.all(ViColors.whiteColor),
+            foregroundColor: WidgetStateProperty.all(ViColors.mainDefault),
+            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(35.0),
                 side: BorderSide(color: ViColors.whiteColor),
@@ -98,13 +101,83 @@ class AuthScreen extends StatelessWidget {
     );
   }
 
-  Future<String?> _loginUser(LoginData data) async {
-    debugPrint('Username: ${data.email}, Password: ${data.password}');
-    return null; // Return null jika sukses, atau string error jika gagal
+  Future<String?> _loginUser(BuildContext context, LoginData data) async {
+    try {
+      final dio = Dio();
+      final response = await dio.post(
+        'http://vimedika.com:4001/login',
+        data: {
+          "username": data.email,
+          "password": data.password,
+        },
+        options: Options(headers: {"Content-Type": "application/json"}),
+      );
+
+      if (response.data['status'] == 'success') {
+        final token = response.data['data'];
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', token);
+        debugPrint('Login sukses, token disimpan: $token');
+
+        // Setelah token tersimpan, ambil daftar cabang
+        _fetchBranches(context, token);
+        return null;
+      } else {
+        _showErrorDialog(context, response.data['message']);
+        return 'Login gagal: ${response.data['message']}';
+      }
+    } catch (e) {
+      _showErrorDialog(context, 'Terjadi kesalahan, coba lagi.');
+      return 'Terjadi kesalahan, coba lagi.';
+    }
+  }
+
+  Future<void> _fetchBranches(BuildContext context, String token) async {
+    try {
+      final dio = Dio();
+      final response = await dio.get(
+        'http://vimedika.com:4001/list_branches',
+        options: Options(headers: {"Authorization": "Bearer $token"}),
+      );
+
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        final branches = response.data['data'];
+        
+        // Arahkan ke halaman daftar branches
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BranchesScreen(branches: branches),
+          ),
+        );
+      } else {
+        _showErrorDialog(context, 'Gagal mengambil data cabang.');
+      }
+    } catch (e) {
+      _showErrorDialog(context, 'Terjadi kesalahan saat mengambil data cabang.');
+    }
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Login Gagal'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<String?> _registerUser(SignUpData data) async {
     debugPrint('Username: ${data.email}, Password: ${data.password}');
-    return null; // Return null jika sukses, atau string error jika gagal
+    return null;
   }
 }
