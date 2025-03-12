@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:page_transition/page_transition.dart';
+import 'auth_screen.dart'; // Sesuaikan dengan nama file login
 import '../widgets/custom_menu.dart';
 import '../items/dashboard_item.dart';
 import '../items/transaksi_pembelian_item.dart';
@@ -29,6 +32,31 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String _selectedMenu = 'Dashboard';
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAuth();
+  }
+
+  Future<void> _checkAuth() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('tokenJWT');
+    final profile = prefs.getString('profileData');
+
+    if (token == null || profile == null) {
+      // Token atau data profil tidak ditemukan, alihkan ke login
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          PageTransition(
+            type: PageTransitionType.fade,
+            child: const AuthScreen(), // Pastikan LoginScreen ada
+          ),
+        );
+      }
+    }
+  }
 
   Widget _getSelectedPage(String menuTitle) {
     switch (menuTitle) {
@@ -90,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Expanded(
             child: Container(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: _getSelectedPage(_selectedMenu),
             ),
           ),

@@ -30,9 +30,7 @@ class AuthScreen extends StatelessWidget {
             privacyPolicyLink: 'http://vimedika.com',
             termsConditionsLink: 'http://vimedika.com',
           ),
-          logo: Image.asset(
-            'assets/images/ziida.png',
-          ),
+          logo: Image.asset('assets/images/ziida.png'),
           emailValidator: ValidatorModel(
             validatorCallback: (value) {
               if (value == null || value.isEmpty) {
@@ -51,7 +49,10 @@ class AuthScreen extends StatelessWidget {
           ),
           loginDesktopTheme: LoginViewTheme(
             logoSize: const Size(200, 200),
-            nameIcon: Icon(Icons.perm_contact_cal_outlined, color: ViColors.mainDefault),
+            nameIcon: Icon(
+              Icons.perm_contact_cal_outlined,
+              color: ViColors.mainDefault,
+            ),
             emailIcon: Icon(Icons.perm_identity, color: ViColors.mainDefault),
             passwordIcon: Icon(Icons.lock_outline, color: ViColors.mainDefault),
             backgroundColor: ViColors.mainDefault,
@@ -84,7 +85,10 @@ class AuthScreen extends StatelessWidget {
           ),
           loginMobileTheme: LoginViewTheme(
             logoSize: const Size(125, 125),
-            nameIcon: Icon(Icons.perm_contact_cal_outlined, color: ViColors.mainDefault),
+            nameIcon: Icon(
+              Icons.perm_contact_cal_outlined,
+              color: ViColors.mainDefault,
+            ),
             emailIcon: Icon(Icons.perm_identity, color: ViColors.mainDefault),
             passwordIcon: Icon(Icons.lock_outline, color: ViColors.mainDefault),
             backgroundColor: ViColors.mainDefault,
@@ -114,13 +118,8 @@ class AuthScreen extends StatelessWidget {
       final dio = Dio();
       final response = await dio.post(
         'http://vimedika.com:4001/login',
-        data: {
-          "username": data.email,
-          "password": data.password,
-        },
-        options: Options(
-          headers: {"Content-Type": "application/json"},
-        ),
+        data: {"username": data.email, "password": data.password},
+        options: Options(headers: {"Content-Type": "application/json"}),
       );
 
       if (response.data['status'] == 'success') {
@@ -161,7 +160,10 @@ class AuthScreen extends StatelessWidget {
         _showErrorDialog(context, 'Gagal mengambil data cabang.');
       }
     } catch (e) {
-      _showErrorDialog(context, 'Terjadi kesalahan saat mengambil data cabang.');
+      _showErrorDialog(
+        context,
+        'Terjadi kesalahan saat mengambil data cabang.',
+      );
     }
   }
 
