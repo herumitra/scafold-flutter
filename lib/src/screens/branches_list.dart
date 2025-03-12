@@ -57,41 +57,43 @@ class HoverableBranchItem extends StatefulWidget {
 }
 
 class _HoverableBranchItemState extends State<HoverableBranchItem> {
-  bool _isHovered = false; // Untuk melacak hover state
+  bool _isHovered = false;
 
   Future<void> _setBranch(BuildContext context) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token'); // Ambil token yang tersimpan
+      final token = prefs.getString('tokenJWT');
 
       if (token == null || token.isEmpty) {
         _showErrorDialog(context, 'Token tidak ditemukan. Harap login ulang.');
         return;
       }
 
-      // Tampilkan konfirmasi sebelum memilih cabang
       bool confirm = await _showConfirmationDialog(context);
-      if (!confirm) return; // Jika user batal, hentikan proses
+      if (!confirm) return; 
 
       final dio = Dio();
       final response = await dio.post(
         'http://vimedika.com:4001/set_branch',
         data: {"branch_id": widget.branch['branch_id']},
-        options: Options(headers: {"Authorization": "Bearer $token"}),
+        options: Options(
+          headers: {"Authorization": "Bearer $token"},
+          validateStatus: (status) => status! < 500,
+        ),
       );
 
+      debugPrint("Response set_branch: ${response.data}");
+
       if (response.statusCode == 200 && response.data['status'] == 'success') {
-        final newToken = response.data['token']; // Token baru dari respons
+        final newToken = response.data['data'];
 
-        // Simpan token baru ke SharedPreferences
-        await prefs.setString('token', newToken);
-
-        // Ambil data profil dengan token baru
+        await prefs.setString('tokenJWT', newToken);
         await _fetchProfile(context, newToken);
       } else {
-        _showErrorDialog(context, response.data['message']);
+        _showErrorDialog(context, response.data['message'] ?? 'Gagal memilih cabang.');
       }
     } catch (e) {
+      debugPrint("Error set_branch: $e");
       _showErrorDialog(context, 'Terjadi kesalahan, coba lagi.');
     }
   }
@@ -101,30 +103,34 @@ class _HoverableBranchItemState extends State<HoverableBranchItem> {
       final dio = Dio();
       final response = await dio.get(
         'http://vimedika.com:4001/profile',
-        options: Options(headers: {"Authorization": "Bearer $newToken"}),
+        options: Options(
+          headers: {"Authorization": "Bearer $newToken"},
+          validateStatus: (status) => status! < 500,
+        ),
       );
 
-      if (response.statusCode == 200) {
+      debugPrint("Response profile: ${response.data}");
+
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
         final profileData = response.data['data'];
 
-        // Simpan data profil ke SharedPreferences
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('profileData', profileData.toString());
 
-        // Arahkan ke HomeScreen setelah semua data tersimpan
         Navigator.pushReplacement(
           context,
           PageTransition(
             type: PageTransitionType.fade,
-            duration: Duration(milliseconds: 500),
-            child: HomeScreen(),
+            duration: const Duration(milliseconds: 500),
+            child: const HomeScreen(),
           ),
         );
       } else {
         _showErrorDialog(context, 'Gagal mengambil data profil.');
       }
     } catch (e) {
-      // Jika token tidak valid, hapus data profil
+      debugPrint("Error profile: $e");
+
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('profileData');
 
@@ -134,28 +140,27 @@ class _HoverableBranchItemState extends State<HoverableBranchItem> {
 
   Future<bool> _showConfirmationDialog(BuildContext context) async {
     return await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Konfirmasi'),
-              content: Text(
-                'Cabang / Outlet sudah terpilih dengan nama outlet ${widget.branch['branch_name']}. '
-                'Klik OK jika sudah sesuai, atau Cancel jika ingin mengganti.',
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: Text('OK'),
-                ),
-              ],
-            );
-          },
-        ) ??
-        false;
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Konfirmasi'),
+          content: Text(
+            'Cabang / Outlet sudah terpilih dengan nama outlet ${widget.branch['branch_name']}. '
+            'Klik OK jika sudah sesuai, atau Cancel jika ingin mengganti.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    ) ?? false;
   }
 
   void _showErrorDialog(BuildContext context, String message) {

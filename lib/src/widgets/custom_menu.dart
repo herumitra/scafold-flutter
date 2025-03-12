@@ -105,7 +105,7 @@ class _CustomMenuState extends State<CustomMenu> {
         title: 'Logout',
         iconWidget: const Icon(HugeIcons.strokeRoundedAccess),
         onTap: (_, __) {
-          // Tambahkan logika logout di sini
+          widget.onMenuSelected('Logout'); // Kirim 'Logout' ke HomeScreen
         },
       ),
     ];

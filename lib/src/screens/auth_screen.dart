@@ -125,7 +125,7 @@ class AuthScreen extends StatelessWidget {
       if (response.data['status'] == 'success') {
         final token = response.data['data'];
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('token', token);
+        await prefs.setString('tokenJWT', token);
         debugPrint('Login sukses, token disimpan: $token');
         _fetchBranches(context, token);
         return null;

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vimedika/src/screens/splash_screen.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() {
   runApp(const MyApp());
 }
@@ -11,6 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey, // Tambahkan navigatorKey
       debugShowCheckedModeBanner: false,
       title: 'Vimedika',
       theme: ThemeData(primarySwatch: Colors.lightGreen),

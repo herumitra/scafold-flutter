@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:page_transition/page_transition.dart';
-import 'auth_screen.dart'; // Sesuaikan dengan nama file login
+import 'auth_screen.dart';
 import '../widgets/custom_menu.dart';
 import '../items/dashboard_item.dart';
 import '../items/transaksi_pembelian_item.dart';
@@ -41,22 +41,72 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _checkAuth() async {
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
+    final token = prefs.getString('tokenJWT');
     final profile = prefs.getString('profileData');
 
     if (token == null || profile == null) {
-      // Token atau data profil tidak ditemukan, alihkan ke login
       if (mounted) {
         Navigator.pushReplacement(
           context,
           PageTransition(
             type: PageTransitionType.fade,
-            child: const AuthScreen(), // Pastikan LoginScreen ada
+            child: const AuthScreen(),
           ),
         );
       }
     }
   }
+
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // Hapus semua data di SharedPreferences
+
+    if (mounted) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        PageTransition(
+          type: PageTransitionType.fade,
+          child: const AuthScreen(),
+        ),
+        (route) => false,
+      );
+    }
+  }
+
+  Future<void> _confirmLogout() async {
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
+    bool? confirm = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Konfirmasi Logout'),
+          content: const Text('Apakah kamu yakin ingin keluar dari aplikasi?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Batal'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: const Text('Logout', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirm == true) {
+      _logout();
+    } else {
+      setState(() {
+        _selectedMenu = 'Dashboard'; // Balik ke Dashboard kalau batal
+      });
+    }
+  });
+}
+
 
   Widget _getSelectedPage(String menuTitle) {
     switch (menuTitle) {
@@ -98,6 +148,9 @@ class _HomeScreenState extends State<HomeScreen> {
         return MasterSupplierProdukItem();
       case 'Profile':
         return ProfileItem();
+      case 'Logout': 
+        _confirmLogout(); // Panggil dialog konfirmasi logout
+        return DashboardItem(); // Tetap tampilkan dashboard sementara
       default:
         return DashboardItem();
     }
