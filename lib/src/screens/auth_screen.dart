@@ -57,9 +57,7 @@ class AuthScreen extends StatelessWidget {
             passwordIcon: Icon(Icons.lock_outline, color: ViColors.mainDefault),
             backgroundColor: ViColors.mainDefault,
             formFieldBackgroundColor: Colors.white,
-            textFormStyle: TextStyle(
-              color: ViColors.textDefault
-            ),
+            textFormStyle: TextStyle(color: ViColors.textDefault),
             formTitleStyle: TextStyle(
               color: ViColors.mainDefault,
               fontWeight: FontWeight.bold,
@@ -96,9 +94,7 @@ class AuthScreen extends StatelessWidget {
             passwordIcon: Icon(Icons.lock_outline, color: ViColors.mainDefault),
             backgroundColor: ViColors.mainDefault,
             formFieldBackgroundColor: Colors.white,
-            textFormStyle: TextStyle(
-              color: ViColors.textDefault
-            ),
+            textFormStyle: TextStyle(color: ViColors.textDefault),
             formTitleStyle: TextStyle(
               color: ViColors.mainDefault,
               fontWeight: FontWeight.bold,
@@ -132,7 +128,7 @@ class AuthScreen extends StatelessWidget {
         final token = response.data['data'];
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('tokenJWT', token);
-        debugPrint('Login sukses, token disimpan: $token');
+        // debugPrint('Login sukses, token disimpan: $token');
         _fetchBranches(context, token);
         return null;
       } else {
@@ -192,7 +188,7 @@ class AuthScreen extends StatelessWidget {
   }
 
   Future<String?> _registerUser(SignUpData data) async {
-    debugPrint('Username: ${data.email}, Password: ${data.password}');
+    // debugPrint('Username: ${data.email}, Password: ${data.password}');
     return null;
   }
 }

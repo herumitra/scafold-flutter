@@ -70,7 +70,7 @@ class _HoverableBranchItemState extends State<HoverableBranchItem> {
       }
 
       bool confirm = await _showConfirmationDialog(context);
-      if (!confirm) return; 
+      if (!confirm) return;
 
       final dio = Dio();
       final response = await dio.post(
@@ -82,7 +82,7 @@ class _HoverableBranchItemState extends State<HoverableBranchItem> {
         ),
       );
 
-      debugPrint("Response set_branch: ${response.data}");
+      // debugPrint("Response set_branch: ${response.data}");
 
       if (response.statusCode == 200 && response.data['status'] == 'success') {
         final newToken = response.data['data'];
@@ -90,10 +90,13 @@ class _HoverableBranchItemState extends State<HoverableBranchItem> {
         await prefs.setString('tokenJWT', newToken);
         await _fetchProfile(context, newToken);
       } else {
-        _showErrorDialog(context, response.data['message'] ?? 'Gagal memilih cabang.');
+        _showErrorDialog(
+          context,
+          response.data['message'] ?? 'Gagal memilih cabang.',
+        );
       }
     } catch (e) {
-      debugPrint("Error set_branch: $e");
+      // debugPrint("Error set_branch: $e");
       _showErrorDialog(context, 'Terjadi kesalahan, coba lagi.');
     }
   }
@@ -109,7 +112,7 @@ class _HoverableBranchItemState extends State<HoverableBranchItem> {
         ),
       );
 
-      debugPrint("Response profile: ${response.data}");
+      // debugPrint("Response profile: ${response.data}");
 
       if (response.statusCode == 200 && response.data['status'] == 'success') {
         final profileData = response.data['data'];
@@ -129,7 +132,7 @@ class _HoverableBranchItemState extends State<HoverableBranchItem> {
         _showErrorDialog(context, 'Gagal mengambil data profil.');
       }
     } catch (e) {
-      debugPrint("Error profile: $e");
+      // debugPrint("Error profile: $e");
 
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('profileData');
@@ -140,27 +143,28 @@ class _HoverableBranchItemState extends State<HoverableBranchItem> {
 
   Future<bool> _showConfirmationDialog(BuildContext context) async {
     return await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Konfirmasi'),
-          content: Text(
-            'Cabang / Outlet sudah terpilih dengan nama outlet ${widget.branch['branch_name']}. '
-            'Klik OK jika sudah sesuai, atau Cancel jika ingin mengganti.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    ) ?? false;
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Konfirmasi'),
+              content: Text(
+                'Cabang / Outlet sudah terpilih dengan nama outlet ${widget.branch['branch_name']}. '
+                'Klik OK jika sudah sesuai, atau Cancel jika ingin mengganti.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
   }
 
   void _showErrorDialog(BuildContext context, String message) {

@@ -15,10 +15,8 @@ class DialogBuilder {
     context: context,
     barrierDismissible: false,
     builder:
-        (BuildContext context) => WillPopScope(
-          onWillPop: () async => false,
-          child: const AlertDialog(content: LoadingIndicator()),
-        ),
+        (BuildContext context) =>
+            const AlertDialog(content: LoadingIndicator()),
   );
 
   /// Example result dialog

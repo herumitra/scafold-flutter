@@ -21,27 +21,33 @@ class ApiService {
         await saveProfileData(response.data['data']);
       }
     } catch (e) {
-      print('Error fetching profile: $e');
+      // print('Error fetching profile: $e');
+      return;
     }
   }
 
-Future<void> saveProfileData(Map<String, dynamic> data) async {
+  Future<void> saveProfileData(Map<String, dynamic> data) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('profileData', jsonEncode({
-      'user_id': data['useri_id'],
-      'name': data['profile_name'],
-      'branch_id': data['branch_id'],
-      'branch_name': data['branch_name'],
-      'address': data['address'],
-      'phone': data['phone'],
-      'email': data['email'],
-      'sia_name': data['sia_name'],
-      'psa_name': data['psa_name'],
-      'sipa_name': data['sipa_name'],
-      'tax_percentage': data['tax_percentage'],
-      'journal_method': data['journal_method'],
-    })); 
+    await prefs.setString(
+      'profileData',
+      jsonEncode({
+        'user_id': data['useri_id'],
+        'name': data['profile_name'],
+        'branch_id': data['branch_id'],
+        'branch_name': data['branch_name'],
+        'address': data['address'],
+        'phone': data['phone'],
+        'email': data['email'],
+        'sia_name': data['sia_name'],
+        'psa_name': data['psa_name'],
+        'sipa_name': data['sipa_name'],
+        'tax_percentage': data['tax_percentage'],
+        'journal_method': data['journal_method'],
+      }),
+    );
 
-    print("Data profile berhasil disimpan: ${prefs.getString('profileData')}"); // Debugging
+    // print(
+    //   "Data profile berhasil disimpan: ${prefs.getString('profileData')}",
+    // ); // Debugging
   }
 }
