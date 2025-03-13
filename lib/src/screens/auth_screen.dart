@@ -57,6 +57,9 @@ class AuthScreen extends StatelessWidget {
             passwordIcon: Icon(Icons.lock_outline, color: ViColors.mainDefault),
             backgroundColor: ViColors.mainDefault,
             formFieldBackgroundColor: Colors.white,
+            textFormStyle: TextStyle(
+              color: ViColors.textDefault
+            ),
             formTitleStyle: TextStyle(
               color: ViColors.mainDefault,
               fontWeight: FontWeight.bold,
@@ -93,6 +96,9 @@ class AuthScreen extends StatelessWidget {
             passwordIcon: Icon(Icons.lock_outline, color: ViColors.mainDefault),
             backgroundColor: ViColors.mainDefault,
             formFieldBackgroundColor: Colors.white,
+            textFormStyle: TextStyle(
+              color: ViColors.textDefault
+            ),
             formTitleStyle: TextStyle(
               color: ViColors.mainDefault,
               fontWeight: FontWeight.bold,
@@ -117,7 +123,7 @@ class AuthScreen extends StatelessWidget {
     try {
       final dio = Dio();
       final response = await dio.post(
-        'http://vimedika.com:4001/login',
+        'http://api.vimedika.com:4001/login',
         data: {"username": data.email, "password": data.password},
         options: Options(headers: {"Content-Type": "application/json"}),
       );

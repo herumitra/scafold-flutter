@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vimedika/src/screens/splash_screen.dart';
+import 'src/screens/splash_screen.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 

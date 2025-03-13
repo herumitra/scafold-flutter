@@ -74,7 +74,7 @@ class _HoverableBranchItemState extends State<HoverableBranchItem> {
 
       final dio = Dio();
       final response = await dio.post(
-        'http://vimedika.com:4001/set_branch',
+        'http://api.vimedika.com:4001/set_branch',
         data: {"branch_id": widget.branch['branch_id']},
         options: Options(
           headers: {"Authorization": "Bearer $token"},
@@ -102,7 +102,7 @@ class _HoverableBranchItemState extends State<HoverableBranchItem> {
     try {
       final dio = Dio();
       final response = await dio.get(
-        'http://vimedika.com:4001/profile',
+        'http://api.vimedika.com:4001/profile',
         options: Options(
           headers: {"Authorization": "Bearer $newToken"},
           validateStatus: (status) => status! < 500,

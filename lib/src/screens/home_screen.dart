@@ -22,6 +22,7 @@ import '../items/master_member_item.dart';
 import '../items/master_supplier_item.dart';
 import '../items/master_supplier_produk_item.dart';
 import '../items/profile_item.dart';
+import '../services/api_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -39,21 +40,20 @@ class _HomeScreenState extends State<HomeScreen> {
     _checkAuth();
   }
 
-  Future<void> _checkAuth() async {
+    Future<void> _checkAuth() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('tokenJWT');
-    final profile = prefs.getString('profileData');
 
-    if (token == null || profile == null) {
+    if (token == null) {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          PageTransition(
-            type: PageTransitionType.fade,
-            child: const AuthScreen(),
-          ),
+          PageTransition(type: PageTransitionType.fade, child: const AuthScreen()),
         );
       }
+    } else {
+      // Panggil API untuk mendapatkan profile terbaru
+      await ApiService().fetchProfile();
     }
   }
 
