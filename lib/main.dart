@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'src/screens/splash_screen.dart';
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() {
   runApp(const MyApp());
+  
+  // Atur agar aplikasi langsung fullscreen saat dijalankan
+  doWhenWindowReady(() {
+    final win = appWindow;
+    win.maximize();
+    win.show();
+  });
 }
 
 class MyApp extends StatelessWidget {

@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   awesome_notifications
+  bitsdojo_window_linux
   printing
   url_launcher_linux
 )
