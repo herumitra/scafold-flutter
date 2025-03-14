@@ -26,7 +26,7 @@ class AuthScreen extends StatelessWidget {
             nameHint: 'Nama Lengkap',
             signupEmailHint: 'Username',
             welcomeBackDescription:
-                'Please contact us if you encounter any issues at support@vimedika.com',
+                'Please contact us if you encounter any issues \nat support@vimedika.com',
             privacyPolicyLink: 'http://vimedika.com',
             termsConditionsLink: 'http://vimedika.com',
           ),

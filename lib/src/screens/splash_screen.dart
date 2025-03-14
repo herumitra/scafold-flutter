@@ -28,10 +28,13 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: Colors.white,
       body: Center(
         child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.8, // Menyesuaikan batas kanan-kiri
+          width:
+              MediaQuery.of(context).size.width *
+              0.8, // Menyesuaikan batas kanan-kiri
           height: MediaQuery.of(context).size.height, // Tinggi penuh layar
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center, // Tengah secara vertikal
+            mainAxisAlignment:
+                MainAxisAlignment.center, // Tengah secara vertikal
             crossAxisAlignment: CrossAxisAlignment.center, // Tengah horizontal
             children: [
               // Judul utama di tengah
@@ -48,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              
+
               // Subjudul juga di tengah
               DelayedDisplay(
                 delay: const Duration(milliseconds: 1250),
@@ -63,10 +66,12 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               ),
               const SizedBox(height: 15),
-              
+
               // Bungkus teks deskripsi dalam Align + Padding agar sejajar dengan subjudul
               Padding(
-                padding: const EdgeInsets.only(left: 40), // Sesuaikan agar sejajar
+                padding: const EdgeInsets.only(
+                  left: 40,
+                ), // Sesuaikan agar sejajar
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

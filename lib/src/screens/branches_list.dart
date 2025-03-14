@@ -148,8 +148,10 @@ class _HoverableBranchItemState extends State<HoverableBranchItem> {
             return AlertDialog(
               title: Text('Konfirmasi'),
               content: Text(
-                'Cabang / Outlet sudah terpilih dengan nama outlet ${widget.branch['branch_name']}. '
+                'Cabang / Outlet sudah terpilih dengan nama \nOutlet ${widget.branch['branch_name']}.\n'
                 'Klik OK jika sudah sesuai, atau Cancel jika ingin mengganti.',
+                style: const TextStyle(color: ViColors.textDefault),
+                textAlign: TextAlign.center,
               ),
               actions: [
                 TextButton(
