@@ -4,6 +4,7 @@ class Supplier {
   final String phone;
   final String address;
   final String pic;
+  final String categoryName;
   final int supplierCategoryId;
   final String branchId;
 
@@ -13,6 +14,7 @@ class Supplier {
     required this.phone,
     required this.address,
     required this.pic,
+    required this.categoryName,
     required this.supplierCategoryId,
     required this.branchId,
   });
@@ -24,6 +26,7 @@ class Supplier {
       phone: json['phone'],
       address: json['address'],
       pic: json['pic'],
+      categoryName: json['category_name'],
       supplierCategoryId: json['supplier_category_id'],
       branchId: json['branch_id'],
     );
@@ -36,6 +39,7 @@ class Supplier {
       'phone': phone,
       'address': address,
       'pic': pic,
+      'category_name': categoryName,
       'supplier_category_id': supplierCategoryId,
       'branch_id': branchId,
     };

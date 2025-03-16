@@ -62,6 +62,10 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
                     (s) =>
                         s.name.toLowerCase().contains(query.toLowerCase()) ||
                         s.phone.contains(query) ||
+                        s.categoryName.toLowerCase().contains(
+                          query.toLowerCase(),
+                        ) ||
+                        s.pic.toLowerCase().contains(query.toLowerCase()) ||
                         s.address.toLowerCase().contains(query.toLowerCase()),
                   )
                   .toList();
@@ -333,9 +337,21 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
                           maximumWidth: 200,
                         ),
                         GridColumn(
+                          columnName: 'pic',
+                          label: _buildHeader('PIC'),
+                          columnWidthMode: ColumnWidthMode.fill,
+                          maximumWidth: 160,
+                        ),
+                        GridColumn(
                           columnName: 'address',
                           label: _buildHeader('Alamat'),
                           columnWidthMode: ColumnWidthMode.fill,
+                        ),
+                        GridColumn(
+                          columnName: 'category_name',
+                          label: _buildHeader('Kategori'),
+                          columnWidthMode: ColumnWidthMode.fill,
+                          maximumWidth: 160,
                         ),
                         GridColumn(
                           columnName: 'actions',

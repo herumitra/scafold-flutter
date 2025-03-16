@@ -22,9 +22,14 @@ class SupplierDataSource extends DataGridSource {
                     columnName: 'phone',
                     value: supplier.phone,
                   ),
+                  DataGridCell<String>(columnName: 'pic', value: supplier.pic),
                   DataGridCell<String>(
                     columnName: 'address',
                     value: supplier.address,
+                  ),
+                  DataGridCell<String>(
+                    columnName: 'category_name',
+                    value: supplier.categoryName,
                   ),
                   DataGridCell<Widget>(
                     columnName: 'actions',
@@ -56,9 +61,14 @@ class SupplierDataSource extends DataGridSource {
                     columnName: 'phone',
                     value: supplier.phone,
                   ),
+                  DataGridCell<String>(columnName: 'pic', value: supplier.pic),
                   DataGridCell<String>(
                     columnName: 'address',
                     value: supplier.address,
+                  ),
+                  DataGridCell<String>(
+                    columnName: 'category_name',
+                    value: supplier.categoryName,
                   ),
                   DataGridCell<Widget>(
                     columnName: 'actions',
