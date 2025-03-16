@@ -48,8 +48,9 @@ dependencies:
   responsive_framework: ^1.5.1
   secure_application: ^4.0.1
   shared_preferences: ^2.5.1
-  syncfusion_flutter_datagrid: ^28.2.9
+  syncfusion_flutter_datagrid: ^28.2.11
   websafe_svg: ^3.0.1+10
+  syncfusion_flutter_core: ^28.2.11
 
 dev_dependencies:
   flutter_test:

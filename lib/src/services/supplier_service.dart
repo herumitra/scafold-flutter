@@ -32,7 +32,7 @@ class SupplierService {
       } else {
         throw Exception("Format response API tidak sesuai.");
       }
-    } on DioException catch (e) {
+    } on DioException {
       // print("Dio Error: ${e.response?.statusCode} - ${e.message}");
       // print("Error Response: ${e.response?.data}");
       return [];
