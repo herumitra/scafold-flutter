@@ -3,6 +3,8 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import '../models/supplier.dart';
 import '../services/supplier_service.dart';
+import '../utils/constants.dart';
+import '../datasources/supplier_data_source.dart';
 
 class MasterSupplierItem extends StatefulWidget {
   const MasterSupplierItem({super.key});
@@ -15,7 +17,15 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
   late SupplierService _supplierService;
   late SupplierDataSource _supplierDataSource;
   List<Supplier> _suppliers = [];
+  List<Supplier> _filteredSuppliers = [];
+
   bool _isLoading = true;
+  final bool _isFetchingMore = false;
+  final int _currentPage = 1;
+  final int _itemsPerPage = 20;
+
+  final TextEditingController _searchController = TextEditingController();
+  final DataGridController _dataGridController = DataGridController();
 
   @override
   void initState() {
@@ -27,9 +37,11 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
   Future<void> _fetchSuppliers() async {
     setState(() => _isLoading = true);
     try {
-      _suppliers = await _supplierService.getSuppliers();
+      List<Supplier> newData = await _supplierService.getSuppliers();
+      _suppliers = newData;
+      _filteredSuppliers = _suppliers;
       _supplierDataSource = SupplierDataSource(
-        suppliers: _suppliers,
+        suppliers: _filteredSuppliers,
         onDelete: _deleteSupplier,
         onEdit: _showForm,
       );
@@ -40,13 +52,34 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
     }
   }
 
+  void _filterSuppliers(String query) {
+    setState(() {
+      _filteredSuppliers =
+          query.isEmpty
+              ? _suppliers
+              : _suppliers
+                  .where(
+                    (s) =>
+                        s.name.toLowerCase().contains(query.toLowerCase()) ||
+                        s.phone.contains(query) ||
+                        s.address.toLowerCase().contains(query.toLowerCase()),
+                  )
+                  .toList();
+      _supplierDataSource.updateData(_filteredSuppliers);
+    });
+  }
+
   void _showForm({Supplier? supplier}) {
     final formKey = GlobalKey<FormState>();
     final nameController = TextEditingController(text: supplier?.name ?? '');
     final phoneController = TextEditingController(text: supplier?.phone ?? '');
-    final addressController = TextEditingController(text: supplier?.address ?? '');
+    final addressController = TextEditingController(
+      text: supplier?.address ?? '',
+    );
     final picController = TextEditingController(text: supplier?.pic ?? '');
-    final categoryController = TextEditingController(text: supplier?.supplierCategoryId.toString() ?? '');
+    final categoryController = TextEditingController(
+      text: supplier?.supplierCategoryId.toString() ?? '',
+    );
 
     showDialog(
       context: context,
@@ -61,29 +94,41 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
                 children: [
                   _buildTextField("Nama Supplier", nameController),
                   _buildTextField("No. Telepon", phoneController),
-                  _buildTextField("Alamat", addressController),
+                  _buildTextAreaField("Alamat", addressController),
                   _buildTextField("PIC", picController),
-                  _buildTextField("Kategori ID", categoryController),
+                  _buildTextField(
+                    "Kategori ID",
+                    categoryController,
+                  ), // Tambahkan ini
                 ],
               ),
             ),
           ),
           actions: [
             TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: ViColors.textDefault,
+              ),
               onPressed: () => Navigator.pop(context),
               child: const Text("Batal"),
             ),
             ElevatedButton(
+              style: TextButton.styleFrom(
+                foregroundColor: ViColors.textDefault,
+              ),
               onPressed: () async {
                 if (formKey.currentState!.validate()) {
                   Navigator.pop(context);
+                  int categoryId =
+                      int.tryParse(categoryController.text) ??
+                      0; // Konversi ke int
                   if (supplier == null) {
                     await _addSupplier(
                       nameController.text,
                       phoneController.text,
                       addressController.text,
                       picController.text,
-                      int.parse(categoryController.text),
+                      categoryId,
                     );
                   } else {
                     await _updateSupplier(
@@ -92,7 +137,7 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
                       phoneController.text,
                       addressController.text,
                       picController.text,
-                      int.parse(categoryController.text),
+                      categoryId,
                     );
                   }
                 }
@@ -105,10 +150,22 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
     );
   }
 
-  Future<void> _addSupplier(String name, String phone, String address, String pic, int categoryId) async {
+  Future<void> _addSupplier(
+    String name,
+    String phone,
+    String address,
+    String pic,
+    int categoryId,
+  ) async {
     EasyLoading.show(status: 'Menambahkan...');
     try {
-      await _supplierService.createSupplier(name, phone, address, pic, categoryId);
+      await _supplierService.createSupplier(
+        name,
+        phone,
+        address,
+        pic,
+        categoryId,
+      );
       EasyLoading.showSuccess("Supplier berhasil ditambahkan!");
       _fetchSuppliers();
     } catch (e) {
@@ -116,14 +173,28 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
     }
   }
 
-  Future<void> _updateSupplier(String id, String name, String phone, String address, String pic, int categoryId) async {
+  Future<void> _updateSupplier(
+    String id,
+    String name,
+    String phone,
+    String address,
+    String pic,
+    int categoryId,
+  ) async {
     EasyLoading.show(status: 'Mengupdate...');
     try {
-      await _supplierService.updateSupplier(id, name, phone, address, pic, categoryId);
-      EasyLoading.showSuccess("Supplier berhasil diupdate!");
+      await _supplierService.updateSupplier(
+        id,
+        name,
+        phone,
+        address,
+        pic,
+        categoryId,
+      );
+      EasyLoading.showSuccess("Supplier berhasil diperbarui!");
       _fetchSuppliers();
     } catch (e) {
-      EasyLoading.showError("Gagal mengupdate supplier");
+      EasyLoading.showError("Gagal memperbarui supplier");
     }
   }
 
@@ -144,138 +215,157 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
       child: TextFormField(
         controller: controller,
         decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: ViColors.mainDefault),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: ViColors.textDefault),
+          ),
+          labelStyle: const TextStyle(color: ViColors.textDefault),
+          hintStyle: const TextStyle(color: ViColors.textDefault),
           labelText: label,
-          border: OutlineInputBorder(),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          alignLabelWithHint: true, // Biar label sejajar dengan teks area
         ),
-        validator: (value) => value == null || value.isEmpty ? "Wajib diisi" : null,
+        validator:
+            (value) => value == null || value.isEmpty ? "Wajib diisi" : null,
       ),
     );
   }
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: const Text("Master Supplier"),
-      automaticallyImplyLeading: false, // Hilangkan tombol back
-    ),
-    body: _isLoading
-        ? const Center(child: CircularProgressIndicator())
-        : LayoutBuilder(
-            builder: (context, constraints) {
-              return SizedBox(
-                width: double.infinity,
-                height: 15 * 40, // 10 baris dengan tinggi masing-masing 40px
-                child: SfDataGrid(
-                  source: _supplierDataSource,
-                  columns: [
-                    GridColumn(columnName: 'id', label: _buildHeader('ID')),
-                    GridColumn(columnName: 'name', label: _buildHeader('Nama')),
-                    GridColumn(columnName: 'phone', label: _buildHeader('Telepon')),
-                    GridColumn(columnName: 'address', label: _buildHeader('Alamat')),
-                    GridColumn(columnName: 'actions', label: _buildHeader('Aksi')),
-                  ],
-                  rowHeight: 40, // Tinggi setiap baris
-                ),
-              );
-            },
+  Widget _buildTextAreaField(String label, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: ViColors.mainDefault),
           ),
-    floatingActionButton: FloatingActionButton(
-      onPressed: () => _showForm(),
-      child: const Icon(Icons.add),
-    ),
-  );
-}
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: ViColors.textDefault),
+          ),
+          labelStyle: const TextStyle(color: ViColors.textDefault),
+          hintStyle: const TextStyle(color: ViColors.textDefault),
+          labelText: label,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          alignLabelWithHint: true, // Biar label sejajar dengan teks area
+        ),
+        keyboardType: TextInputType.multiline,
+        maxLines: null, // Supaya bisa lebih dari satu baris
+        minLines: 3, // Tinggi awal 3 baris
+        validator:
+            (value) => value == null || value.isEmpty ? "Wajib diisi" : null,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "MASTER SUPPLIER",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: ViColors.mainDefault,
+          ),
+        ),
+        automaticallyImplyLeading: false,
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              style: const TextStyle(color: ViColors.textDefault),
+              controller: _searchController,
+              onChanged: _filterSuppliers,
+              decoration: InputDecoration(
+                hintStyle: TextStyle(color: ViColors.textDefault),
+                labelStyle: TextStyle(
+                  color: const Color.fromARGB(255, 65, 66, 68),
+                ),
+                labelText: "Cari Supplier",
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: const Color.fromARGB(255, 65, 66, 68),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: ViColors.mainDefault),
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child:
+                _isLoading
+                    ? Center(child: CircularProgressIndicator())
+                    : SfDataGrid(
+                      source: _supplierDataSource,
+                      controller: _dataGridController,
+                      columns: [
+                        GridColumn(
+                          columnName: 'id',
+                          label: _buildHeader('ID'),
+                          columnWidthMode: ColumnWidthMode.fill,
+                          maximumWidth: 160,
+                        ),
+                        GridColumn(
+                          columnName: 'name',
+                          label: _buildHeader('Nama'),
+                          columnWidthMode: ColumnWidthMode.fill,
+                          maximumWidth: 200,
+                          minimumWidth: 75,
+                        ),
+                        GridColumn(
+                          columnName: 'phone',
+                          label: _buildHeader('Telepon'),
+                          columnWidthMode: ColumnWidthMode.fill,
+                          maximumWidth: 200,
+                        ),
+                        GridColumn(
+                          columnName: 'address',
+                          label: _buildHeader('Alamat'),
+                          columnWidthMode: ColumnWidthMode.fill,
+                        ),
+                        GridColumn(
+                          columnName: 'actions',
+                          label: _buildHeader('Aksi'),
+                          width: 100,
+                        ),
+                      ],
+                    ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showForm(),
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
 
   Widget _buildHeader(String title) {
     return Container(
       padding: const EdgeInsets.all(8),
       alignment: Alignment.center,
-      color: Colors.blueGrey,
+      color: ViColors.mainDefault,
       child: Text(
         title,
-        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
 }
-
-class SupplierDataSource extends DataGridSource {
-  List<DataGridRow> _rows = [];
-  final Function(String) onDelete;
-  final Function({Supplier? supplier}) onEdit;
-
-  SupplierDataSource({
-    required List<Supplier> suppliers,
-    required this.onDelete,
-    required this.onEdit,
-  }) {
-    _updateRows(suppliers);
-  }
-
-  void _updateRows(List<Supplier> suppliers) {
-    _rows = suppliers.map<DataGridRow>((supplier) {
-      return DataGridRow(cells: [
-        DataGridCell<String>(columnName: 'id', value: supplier.id),
-        DataGridCell<String>(columnName: 'name', value: supplier.name),
-        DataGridCell<String>(columnName: 'phone', value: supplier.phone),
-        DataGridCell<String>(columnName: 'address', value: supplier.address),
-        DataGridCell<Widget>(
-          columnName: 'actions',
-          value: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.edit, color: Colors.blue),
-                onPressed: () => onEdit(supplier: supplier),
-              ),
-              IconButton(
-                icon: const Icon(Icons.delete, color: Colors.red),
-                onPressed: () => onDelete(supplier.id),
-              ),
-            ],
-          ),
-        ),
-      ]);
-    }).toList();
-
-    // Tambahkan baris kosong jika kurang dari 10
-    while (_rows.length < 10) {
-      _rows.add(DataGridRow(cells: [
-        DataGridCell<String>(columnName: 'id', value: ''),
-        DataGridCell<String>(columnName: 'name', value: ''),
-        DataGridCell<String>(columnName: 'phone', value: ''),
-        DataGridCell<String>(columnName: 'address', value: ''),
-        DataGridCell<Widget>(columnName: 'actions', value: Container()), // Kosong
-      ]));
-    }
-
-    notifyListeners(); // Update tampilan DataGrid
-  }
-
-  @override
-  List<DataGridRow> get rows => _rows;
-
-  @override
-  DataGridRowAdapter buildRow(DataGridRow row) {
-    return DataGridRowAdapter(
-      cells: row.getCells().map<Widget>((dataCell) {
-        if (dataCell.columnName == 'actions') {
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            alignment: Alignment.center,
-            child: dataCell.value, // Menampilkan tombol Edit & Hapus jika ada
-          );
-        } else {
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            alignment: Alignment.centerLeft,
-            child: Text(dataCell.value.toString()),
-          );
-        }
-      }).toList(),
-    );
-  }
-}
-
-
