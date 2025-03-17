@@ -11,6 +11,11 @@ class SupplierService {
     return prefs.getString('tokenJWT') ?? "";
   }
 
+  Future<String> getToken() async{
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('tokenJWT') ?? "";
+  }
+
   Future<List<Supplier>> getSuppliers() async {
     try {
       final token = await _getToken();
@@ -39,6 +44,20 @@ class SupplierService {
     } catch (e) {
       // print("Error: $e");
       return [];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getSupplierCategories() async {
+    final token = await getToken();
+    final response = await _dio.get(
+      "http://api.vimedika.com:4002/api/supplier_categories",
+      options: Options(headers: {"Authorization": "Bearer $token"}),
+    );
+
+    if (response.data["status"] == "success") {
+      return List<Map<String, dynamic>>.from(response.data["data"]);
+    } else {
+      throw Exception("Gagal mengambil kategori");
     }
   }
 
