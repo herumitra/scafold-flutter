@@ -23,6 +23,7 @@ import '../items/master_supplier_item.dart';
 import '../items/master_supplier_produk_item.dart';
 import '../items/profile_item.dart';
 import '../services/api_service.dart';
+import '../utils/constants.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -88,10 +89,16 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             actions: [
               TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: ViColors.textDefault,
+                ),
                 onPressed: () => Navigator.of(context).pop(false),
                 child: const Text('Batal'),
               ),
               TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: ViColors.textDefault,
+                ),
                 onPressed: () {
                   Navigator.of(context).pop(true);
                 },

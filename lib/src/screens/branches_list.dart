@@ -146,19 +146,28 @@ class _HoverableBranchItemState extends State<HoverableBranchItem> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Konfirmasi'),
+              title: Text(
+                'Konfirmasi',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               content: Text(
                 'Cabang / Outlet sudah terpilih dengan nama \nOutlet ${widget.branch['branch_name']}.\n'
                 'Klik OK jika sudah sesuai, atau Cancel jika ingin mengganti.',
-                style: const TextStyle(color: ViColors.textDefault),
+                // style: const TextStyle(color: ViColors.textDefault),
                 textAlign: TextAlign.center,
               ),
               actions: [
                 TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: ViColors.textDefault,
+                  ),
                   onPressed: () => Navigator.of(context).pop(false),
                   child: Text('Cancel'),
                 ),
                 TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: ViColors.textDefault,
+                  ),
                   onPressed: () => Navigator.of(context).pop(true),
                   child: Text('OK'),
                 ),

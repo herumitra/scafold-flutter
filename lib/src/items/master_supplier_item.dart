@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
@@ -23,9 +22,6 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
   int? _selectedCategoryId; // ID kategori yang dipilih
 
   bool _isLoading = true;
-  final bool _isFetchingMore = false;
-  final int _currentPage = 1;
-  final int _itemsPerPage = 20;
 
   final TextEditingController _searchController = TextEditingController();
   final DataGridController _dataGridController = DataGridController();
@@ -78,20 +74,20 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
   }
 
   Future<void> _fetchCategories() async {
-  try {
-    final newCategories = await _supplierService.getSupplierCategories();
-    setState(() {
-      // Hilangkan kategori yang duplikat berdasarkan ID
-      final uniqueCategories = <int, Map<String, dynamic>>{};
-      for (var category in newCategories) {
-        uniqueCategories[category["id"]] = category;
-      }
-      _categories = uniqueCategories.values.toList();
-    });
-  } catch (e) {
-    EasyLoading.showError("Gagal mengambil kategori");
+    try {
+      final newCategories = await _supplierService.getSupplierCategories();
+      setState(() {
+        // Hilangkan kategori yang duplikat berdasarkan ID
+        final uniqueCategories = <int, Map<String, dynamic>>{};
+        for (var category in newCategories) {
+          uniqueCategories[category["id"]] = category;
+        }
+        _categories = uniqueCategories.values.toList();
+      });
+    } catch (e) {
+      EasyLoading.showError("Gagal mengambil kategori");
+    }
   }
-}
 
   void _showForm({Supplier? supplier}) {
     final formKey = GlobalKey<FormState>();
@@ -101,10 +97,6 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
       text: supplier?.address ?? '',
     );
     final picController = TextEditingController(text: supplier?.pic ?? '');
-    // final categoryController = TextEditingController(
-    //   text: supplier?.supplierCategoryId.toString() ?? '',
-    // );
-    int? selectedCategory = supplier?.supplierCategoryId;
 
     setState(() {
       _selectedCategoryId = supplier?.supplierCategoryId;
@@ -114,7 +106,14 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(supplier == null ? 'Tambah Supplier' : 'Edit Supplier'),
+          title: Text(
+            supplier == null ? 'Tambah Supplier' : 'Edit Supplier',
+            style: TextStyle(
+              // color: ViColors.textDefault,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
           content: Form(
             key: formKey,
             child: SingleChildScrollView(
@@ -126,10 +125,6 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
                   _buildTextAreaField("Alamat", addressController),
                   _buildTextField("PIC", picController),
                   _buildCategoryDropdown(),
-                  // _buildTextField(
-                  //   "Kategori ID",
-                  //   categoryController,
-                  // ), // Tambahkan ini
                 ],
               ),
             ),
@@ -147,28 +142,28 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
                 foregroundColor: ViColors.textDefault,
               ),
               onPressed: () async {
-              if (formKey.currentState!.validate()) {
-                Navigator.pop(context);
-                if (supplier == null) {
-                  await _addSupplier(
-                    nameController.text,
-                    phoneController.text,
-                    addressController.text,
-                    picController.text,
-                    _selectedCategoryId!,
-                  );
-                } else {
-                  await _updateSupplier(
-                    supplier.id,
-                    nameController.text,
-                    phoneController.text,
-                    addressController.text,
-                    picController.text,
-                    _selectedCategoryId!,
-                  );
+                if (formKey.currentState!.validate()) {
+                  Navigator.pop(context);
+                  if (supplier == null) {
+                    await _addSupplier(
+                      nameController.text,
+                      phoneController.text,
+                      addressController.text,
+                      picController.text,
+                      _selectedCategoryId!,
+                    );
+                  } else {
+                    await _updateSupplier(
+                      supplier.id,
+                      nameController.text,
+                      phoneController.text,
+                      addressController.text,
+                      picController.text,
+                      _selectedCategoryId!,
+                    );
+                  }
                 }
-              }
-            },
+              },
               child: Text(supplier == null ? "Tambah" : "Update"),
             ),
           ],
@@ -237,23 +232,25 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
   }
 
   Widget _buildTextField(String label, TextEditingController controller) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 5),
+      width: 450,
       child: TextFormField(
         controller: controller,
         decoration: InputDecoration(
+          contentPadding: const EdgeInsets.all(20),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(8),
             borderSide: const BorderSide(color: ViColors.mainDefault),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: ViColors.textDefault),
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: ViColors.greyColor),
           ),
           labelStyle: const TextStyle(color: ViColors.textDefault),
           hintStyle: const TextStyle(color: ViColors.textDefault),
           labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
           alignLabelWithHint: true, // Biar label sejajar dengan teks area
         ),
         validator:
@@ -263,28 +260,30 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
   }
 
   Widget _buildTextAreaField(String label, TextEditingController controller) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 5),
+      width: 450, // Atur lebar minimum
       child: TextFormField(
         controller: controller,
         decoration: InputDecoration(
+          contentPadding: const EdgeInsets.all(20),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(8),
             borderSide: const BorderSide(color: ViColors.mainDefault),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: ViColors.textDefault),
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: ViColors.greyColor),
           ),
           labelStyle: const TextStyle(color: ViColors.textDefault),
           hintStyle: const TextStyle(color: ViColors.textDefault),
           labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
           alignLabelWithHint: true, // Biar label sejajar dengan teks area
         ),
         keyboardType: TextInputType.multiline,
         maxLines: null, // Supaya bisa lebih dari satu baris
-        minLines: 3, // Tinggi awal 3 baris
+        minLines: 4, // Tinggi awal 3 baris
         validator:
             (value) => value == null || value.isEmpty ? "Wajib diisi" : null,
       ),
@@ -409,61 +408,42 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
   }
 
   Widget _buildCategoryDropdown() {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 5),
-    child: DropdownButtonFormField<int>(
-      value: _selectedCategoryId,
-      onChanged: (value) {
-        setState(() {
-          _selectedCategoryId = value;
-        });
-      },
-      items: _categories.map<DropdownMenuItem<int>>((category) {
-        return DropdownMenuItem<int>(
-          value: category["id"],
-          child: Text(category["name"]),
-        );
-      }).toList(),
-      decoration: InputDecoration(
-        labelText: "Kategori",
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 5),
+      width: 450,
+      child: DropdownButtonFormField<int>(
+        padding: const EdgeInsets.all(3),
+        value: _selectedCategoryId,
+        onChanged: (value) {
+          setState(() {
+            _selectedCategoryId = value;
+          });
+        },
+        items:
+            _categories.map<DropdownMenuItem<int>>((category) {
+              return DropdownMenuItem<int>(
+                value: category["id"],
+                child: Text(category["name"]),
+              );
+            }).toList(),
+        decoration: InputDecoration(
+          labelText: "Kategori",
+          contentPadding: const EdgeInsets.all(20),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: ViColors.mainDefault),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: ViColors.greyColor),
+          ),
+          labelStyle: const TextStyle(color: ViColors.textDefault),
+          hintStyle: const TextStyle(color: ViColors.textDefault),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+          alignLabelWithHint: true, // Biar label sejajar dengan teks area
+        ),
+        validator: (value) => value == null ? "Wajib pilih kategori" : null,
       ),
-      validator: (value) => value == null ? "Wajib pilih kategori" : null,
-    ),
-  );
-}
-
-  Widget _buildDropdownField(
-  String label,
-  List<Map<String, dynamic>> items,
-  int? selectedValue,
-  ValueChanged<int?> onChanged,
-  Supplier? supplier, // Tambahkan parameter supplier
-) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 5),
-    child: DropdownButtonFormField<int>(
-      value: _categories.any((cat) => cat["id"] == supplier?.supplierCategoryId)
-          ? supplier?.supplierCategoryId
-          : null,
-      onChanged: (value) {
-        setState(() {
-          _selectedCategoryId = value!; // Gunakan _selectedCategoryId
-        });
-      },
-      items: _categories.map<DropdownMenuItem<int>>((category) {
-        return DropdownMenuItem<int>(
-          value: category["id"],
-          child: Text(category["name"]),
-        );
-      }).toList(),
-      decoration: InputDecoration(
-        labelText: "Kategori",
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-      validator: (value) => value == null ? "Wajib pilih kategori" : null,
-    ),
-  );
-}
-
+    );
+  }
 }
