@@ -46,8 +46,5 @@ class ApiService {
       }),
     );
 
-    // print(
-    //   "Data profile berhasil disimpan: ${prefs.getString('profileData')}",
-    // ); // Debugging
   }
 }
