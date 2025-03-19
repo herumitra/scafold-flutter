@@ -1,128 +1,91 @@
 import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../models/supplier.dart';
+import '../models/supplier_category.dart';
 import '../utils/api_config.dart';
 
 class SupplierCategoryService {
   final Dio _dio = Dio();
 
-  Future<String> _getToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('tokenJWT') ?? "";
-  }
-
-  Future<String> getToken() async{
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('tokenJWT') ?? "";
-  }
-
-/*************  ✨ Codeium Command ⭐  *************/
-  /// Fetches the list of suppliers from the API.
-  ///
-  /// This function makes an authenticated GET request to the suppliers API
-  /// endpoint using a JWT token. If the response is successful and contains
-  /// supplier data, it parses the JSON data into a list of `Supplier` objects.
-  ///
-  /// Returns a `Future` that completes with a list of `Supplier` objects if
-  /// the API call is successful. If the API response format is not as expected
-  /// or if there is a network error, the function returns an empty list.
-  ///
-  /// Throws an `Exception` if the response format is invalid.
-
-/******  fa5778ab-833b-47cd-848d-0f6f81e2e852  *******/
-  Future<List<Supplier>> getSuppliers() async {
+  /// 🔍 Mengambil daftar kategori supplier
+  Future<List<SupplierCategory>> getSupplierCategories() async {
     try {
-      final token = await _getToken();
-      // print("Token JWT: $token");
-      // print("Calling API: ${ApiConfig.suppliers}");
-
+      final token = await ApiConfig.getTokenJWT();
       final response = await _dio.get(
-        ApiConfig.suppliers,
+        ApiConfig.supplier_categories_endpoint,
         options: Options(headers: {"Authorization": "Bearer $token"}),
       );
 
-      // Pastikan response adalah Map, lalu ambil hanya data
+      print("📥 RESPON API: ${response.data}"); // Debugging
+
       if (response.data is Map<String, dynamic> &&
           response.data.containsKey("data")) {
-        final List<dynamic> supplierList = response.data["data"];
-        // print("Supplier List: $supplierList");
+        final List<dynamic> supplierCategoryList = response.data["data"];
 
-        return supplierList.map((json) => Supplier.fromJson(json)).toList();
+        // Konversi ke list SupplierCategory
+        final parsedData = supplierCategoryList
+            .map((json) => SupplierCategory.fromJson(json))
+            .toList();
+
+        print("📌 Parsed Data: $parsedData"); // Debugging
+
+        return parsedData;
       } else {
-        throw Exception("Format response API tidak sesuai.");
+        print("⚠️ Format response API tidak sesuai.");
+        return [];
       }
-    } on DioException {
-      // print("Dio Error: ${e.response?.statusCode} - ${e.message}");
-      // print("Error Response: ${e.response?.data}");
+    } on DioException catch (e) {
+      print("🚨 Dio Error: ${e.response?.statusCode} - ${e.message}");
+      print("❌ Error Response: ${e.response?.data}");
       return [];
     } catch (e) {
-      // print("Error: $e");
+      print("⚠️ General Error: $e");
       return [];
     }
   }
 
-  Future<List<Map<String, dynamic>>> getSupplierCategories() async {
-    final token = await getToken();
-    final response = await _dio.get(
-      "http://api.vimedika.com:4002/api/supplier_categories",
-      options: Options(headers: {"Authorization": "Bearer $token"}),
-    );
+  /// ➕ Menambahkan kategori supplier
+  Future<void> createSupplierCategory(String name) async {
+    try {
+      final token = await ApiConfig.getTokenJWT();
+      final response = await _dio.post(
+        ApiConfig.supplier_categories_endpoint,
+        data: {"name": name},
+        options: Options(headers: {"Authorization": "Bearer $token"}),
+      );
 
-    if (response.data["status"] == "success") {
-      return List<Map<String, dynamic>>.from(response.data["data"]);
-    } else {
-      throw Exception("Gagal mengambil kategori");
+      print("✅ CREATE Response: ${response.data}");
+    } catch (e) {
+      print("❌ CREATE Error: $e");
     }
   }
 
-  Future<void> createSupplier(
-    String name,
-    String phone,
-    String address,
-    String pic,
-    int categoryId,
-  ) async {
-    final token = await _getToken();
-    await _dio.post(
-      ApiConfig.suppliers,
-      data: {
-        "name": name,
-        "phone": phone,
-        "address": address,
-        "pic": pic,
-        "supplier_category_id": categoryId,
-      },
-      options: Options(headers: {"Authorization": "Bearer $token"}),
-    );
+  /// ✏️ Mengupdate kategori supplier
+  Future<void> updateSupplierCategory(int id, String name) async {
+    try {
+      final token = await ApiConfig.getTokenJWT();
+      final response = await _dio.put(
+        "${ApiConfig.supplier_categories_endpoint}/$id",
+        data: {"name": name},
+        options: Options(headers: {"Authorization": "Bearer $token"}),
+      );
+
+      print("✅ UPDATE Response: ${response.data}");
+    } catch (e) {
+      print("❌ UPDATE Error: $e");
+    }
   }
 
-  Future<void> updateSupplier(
-    String id,
-    String name,
-    String phone,
-    String address,
-    String pic,
-    int categoryId,
-  ) async {
-    final token = await _getToken();
-    await _dio.put(
-      "${ApiConfig.suppliers}/$id",
-      data: {
-        "name": name,
-        "phone": phone,
-        "address": address,
-        "pic": pic,
-        "supplier_category_id": categoryId,
-      },
-      options: Options(headers: {"Authorization": "Bearer $token"}),
-    );
-  }
+  /// ❌ Menghapus kategori supplier
+  Future<void> deleteSupplierCategory(int id) async {
+    try {
+      final token = await ApiConfig.getTokenJWT();
+      final response = await _dio.delete(
+        "${ApiConfig.supplier_categories_endpoint}/$id",
+        options: Options(headers: {"Authorization": "Bearer $token"}),
+      );
 
-  Future<void> deleteSupplier(String id) async {
-    final token = await _getToken();
-    await _dio.delete(
-      "${ApiConfig.suppliers}/$id",
-      options: Options(headers: {"Authorization": "Bearer $token"}),
-    );
+      print("✅ DELETE Response: ${response.data}");
+    } catch (e) {
+      print("❌ DELETE Error: $e");
+    }
   }
 }

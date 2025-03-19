@@ -1,16 +1,16 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
+import '../utils/api_config.dart';
 
 class ApiService {
-  final Dio _dio = Dio(BaseOptions(baseUrl: 'http://api.vimedika.com:4001'));
+  final Dio _dio = Dio(BaseOptions(baseUrl: ApiConfig.baseUrlAuth));
 
   Future<void> fetchProfile() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('tokenJWT');
+      final token = ApiConfig.getTokenJWT();
 
-      if (token == null) return;
+      // if (token == null) return;
 
       final response = await _dio.get(
         '/profile',

@@ -1,29 +1,15 @@
 import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/supplier.dart';
 import '../utils/api_config.dart';
 
 class SupplierService {
   final Dio _dio = Dio();
 
-  Future<String> _getToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('tokenJWT') ?? "";
-  }
-
-  Future<String> getToken() async{
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('tokenJWT') ?? "";
-  }
-
   Future<List<Supplier>> getSuppliers() async {
     try {
-      final token = await _getToken();
-      // print("Token JWT: $token");
-      // print("Calling API: ${ApiConfig.suppliers}");
-
+      final token = await ApiConfig.getTokenJWT();
       final response = await _dio.get(
-        ApiConfig.suppliers,
+        ApiConfig.suppliers_endpoint,
         options: Options(headers: {"Authorization": "Bearer $token"}),
       );
 
@@ -48,11 +34,8 @@ class SupplierService {
   }
 
   Future<List<Map<String, dynamic>>> getSupplierCategories() async {
-    final token = await getToken();
-    final response = await _dio.get(
-      "http://api.vimedika.com:4002/api/supplier_categories",
-      options: Options(headers: {"Authorization": "Bearer $token"}),
-    );
+    final token = await ApiConfig.getTokenJWT();
+    final response = await _dio.get(ApiConfig.supplier_categories_endpoint,options: Options(headers: {"Authorization": "Bearer $token"}));
 
     if (response.data["status"] == "success") {
       return List<Map<String, dynamic>>.from(response.data["data"]);
@@ -68,9 +51,9 @@ class SupplierService {
     String pic,
     int categoryId,
   ) async {
-    final token = await _getToken();
+    final token = await ApiConfig.getTokenJWT();
     await _dio.post(
-      ApiConfig.suppliers,
+      ApiConfig.suppliers_endpoint,
       data: {
         "name": name,
         "phone": phone,
@@ -90,9 +73,9 @@ class SupplierService {
     String pic,
     int categoryId,
   ) async {
-    final token = await _getToken();
+    final token = await ApiConfig.getTokenJWT();
     await _dio.put(
-      "${ApiConfig.suppliers}/$id",
+      "${ApiConfig.suppliers_endpoint}/$id",
       data: {
         "name": name,
         "phone": phone,
@@ -105,9 +88,9 @@ class SupplierService {
   }
 
   Future<void> deleteSupplier(String id) async {
-    final token = await _getToken();
+    final token = await ApiConfig.getTokenJWT();
     await _dio.delete(
-      "${ApiConfig.suppliers}/$id",
+      "${ApiConfig.suppliers_endpoint}/$id",
       options: Options(headers: {"Authorization": "Bearer $token"}),
     );
   }

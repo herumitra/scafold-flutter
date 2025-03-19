@@ -5,6 +5,7 @@ import '../models/supplier.dart';
 import '../services/supplier_service.dart';
 import '../utils/constants.dart';
 import '../datasources/supplier_data_source.dart';
+import '../widgets/forms_widget.dart';
 
 class MasterSupplierItem extends StatefulWidget {
   const MasterSupplierItem({super.key});
@@ -120,11 +121,21 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildTextField("Nama Supplier", nameController),
-                  _buildTextField("No. Telepon", phoneController),
-                  _buildTextAreaField("Alamat", addressController),
-                  _buildTextField("PIC", picController),
-                  _buildCategoryDropdown(),
+                  FormWidgets.buildTextField("Nama Supplier", nameController),
+                  FormWidgets.buildTextField("No. Telepon", phoneController),
+                  FormWidgets.buildTextAreaField("Alamat", addressController),
+                  FormWidgets.buildTextField("PIC", picController),
+                  FormWidgets.buildCustomDropdown(
+                    selectedValue: _selectedCategoryId,
+                    options: _categories,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedCategoryId = value;
+                      });
+                    },
+                    validatorMessage: "Silahkan pilih kategori",
+                    CustomLabelText: "Kategori",
+                  ),
                 ],
               ),
             ),
@@ -231,105 +242,16 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
     }
   }
 
-  Widget _buildTextField(String label, TextEditingController controller) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 5),
-      width: 450,
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-          contentPadding: const EdgeInsets.all(20),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: ViColors.mainDefault),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: ViColors.greyColor),
-          ),
-          labelStyle: const TextStyle(color: ViColors.textDefault),
-          hintStyle: const TextStyle(color: ViColors.textDefault),
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-          alignLabelWithHint: true, // Biar label sejajar dengan teks area
-        ),
-        validator:
-            (value) => value == null || value.isEmpty ? "Wajib diisi" : null,
-      ),
-    );
-  }
-
-  Widget _buildTextAreaField(String label, TextEditingController controller) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 5),
-      width: 450, // Atur lebar minimum
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-          contentPadding: const EdgeInsets.all(20),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: ViColors.mainDefault),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: ViColors.greyColor),
-          ),
-          labelStyle: const TextStyle(color: ViColors.textDefault),
-          hintStyle: const TextStyle(color: ViColors.textDefault),
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-          alignLabelWithHint: true, // Biar label sejajar dengan teks area
-        ),
-        keyboardType: TextInputType.multiline,
-        maxLines: null, // Supaya bisa lebih dari satu baris
-        minLines: 4, // Tinggi awal 3 baris
-        validator:
-            (value) => value == null || value.isEmpty ? "Wajib diisi" : null,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "MASTER SUPPLIER",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: ViColors.mainDefault,
-          ),
-        ),
-        automaticallyImplyLeading: false,
-      ),
+      appBar: AppWidgets.buildAppBar("MASTER SUPPLIER"),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              style: const TextStyle(color: ViColors.textDefault),
-              controller: _searchController,
-              onChanged: _filterSuppliers,
-              decoration: InputDecoration(
-                hintStyle: TextStyle(color: ViColors.textDefault),
-                labelStyle: TextStyle(
-                  color: const Color.fromARGB(255, 65, 66, 68),
-                ),
-                labelText: "Cari Supplier",
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: const Color.fromARGB(255, 65, 66, 68),
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: ViColors.mainDefault),
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
-                ),
-              ),
-            ),
+          AppWidgets.buildSearchBar(
+            controller: _searchController,
+            onChanged: _filterSuppliers,
+            hintText: "Cari Supplier",
           ),
           Expanded(
             child:
@@ -341,43 +263,43 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
                       columns: [
                         GridColumn(
                           columnName: 'id',
-                          label: _buildHeader('ID'),
+                          label: AppWidgets.buildAppHeader('ID'),
                           columnWidthMode: ColumnWidthMode.fill,
                           maximumWidth: 160,
                         ),
                         GridColumn(
                           columnName: 'name',
-                          label: _buildHeader('Nama'),
+                          label: AppWidgets.buildAppHeader('Nama'),
                           columnWidthMode: ColumnWidthMode.fill,
                           maximumWidth: 200,
                           minimumWidth: 75,
                         ),
                         GridColumn(
                           columnName: 'phone',
-                          label: _buildHeader('Telepon'),
+                          label: AppWidgets.buildAppHeader('Telepon'),
                           columnWidthMode: ColumnWidthMode.fill,
                           maximumWidth: 200,
                         ),
                         GridColumn(
                           columnName: 'pic',
-                          label: _buildHeader('PIC'),
+                          label: AppWidgets.buildAppHeader('PIC'),
                           columnWidthMode: ColumnWidthMode.fill,
                           maximumWidth: 160,
                         ),
                         GridColumn(
                           columnName: 'address',
-                          label: _buildHeader('Alamat'),
+                          label: AppWidgets.buildAppHeader('Alamat'),
                           columnWidthMode: ColumnWidthMode.fill,
                         ),
                         GridColumn(
                           columnName: 'category_name',
-                          label: _buildHeader('Kategori'),
+                          label: AppWidgets.buildAppHeader('Kategori'),
                           columnWidthMode: ColumnWidthMode.fill,
                           maximumWidth: 160,
                         ),
                         GridColumn(
                           columnName: 'actions',
-                          label: _buildHeader('Aksi'),
+                          label: AppWidgets.buildAppHeader('Aksi'),
                           width: 100,
                         ),
                       ],
@@ -388,61 +310,6 @@ class _MasterSupplierItemState extends State<MasterSupplierItem> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showForm(),
         child: const Icon(Icons.add),
-      ),
-    );
-  }
-
-  Widget _buildHeader(String title) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      alignment: Alignment.center,
-      color: ViColors.mainDefault,
-      child: Text(
-        title,
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCategoryDropdown() {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 5),
-      width: 450,
-      child: DropdownButtonFormField<int>(
-        padding: const EdgeInsets.all(3),
-        value: _selectedCategoryId,
-        onChanged: (value) {
-          setState(() {
-            _selectedCategoryId = value;
-          });
-        },
-        items:
-            _categories.map<DropdownMenuItem<int>>((category) {
-              return DropdownMenuItem<int>(
-                value: category["id"],
-                child: Text(category["name"]),
-              );
-            }).toList(),
-        decoration: InputDecoration(
-          labelText: "Kategori",
-          contentPadding: const EdgeInsets.all(20),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: ViColors.mainDefault),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: ViColors.greyColor),
-          ),
-          labelStyle: const TextStyle(color: ViColors.textDefault),
-          hintStyle: const TextStyle(color: ViColors.textDefault),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-          alignLabelWithHint: true, // Biar label sejajar dengan teks area
-        ),
-        validator: (value) => value == null ? "Wajib pilih kategori" : null,
       ),
     );
   }

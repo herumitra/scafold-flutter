@@ -1,5 +1,5 @@
 class SupplierCategory {
-  final String id;
+  final int id;
   final String name;
   final String branchId;
 
@@ -11,17 +11,14 @@ class SupplierCategory {
 
   factory SupplierCategory.fromJson(Map<String, dynamic> json) {
     return SupplierCategory(
-      id: json['id'],
-      name: json['name'],
-      branchId: json['branch_id'],
+      id: json['id'], // Pastikan ini int
+      name: json['name'] ?? '',
+      branchId: json['branch_id'] ?? '',
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'branch_id': branchId,
-    };
+  @override
+  String toString() {
+    return 'SupplierCategory(id: $id, name: $name, branchId: $branchId)';
   }
 }
