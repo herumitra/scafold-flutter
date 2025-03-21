@@ -11,7 +11,16 @@ class ApiConfig {
   static const String suppliers_endpoint = "$baseUrl/api/suppliers";
 
   // Endpoint API for Supplier Categories
-  static const String supplier_categories_endpoint = "$baseUrl/api/supplier_categories";
+  static const String supplier_categories_endpoint =
+      "$baseUrl/api/supplier_categories";
+
+  // Endpoint API for Member Categories
+  static const String member_categories_endpoint =
+      "$baseUrl/api/member_categories";
+
+  // Endpoint API for Product Categories
+  static const String product_categories_endpoint =
+      "$baseUrl/api/product_categories";
 
   // Static method to get token
   static Future<String> getTokenJWT() async {

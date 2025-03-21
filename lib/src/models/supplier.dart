@@ -1,5 +1,7 @@
+// Initialize the Supplier class
 class Supplier {
-  final String id; // Ubah dari int? ke String
+  // Define the properties
+  final String id;
   final String name;
   final String phone;
   final String address;
@@ -8,8 +10,9 @@ class Supplier {
   final int supplierCategoryId;
   final String branchId;
 
+  // Constructor
   Supplier({
-    required this.id, // Ubah dari int? ke String
+    required this.id,
     required this.name,
     required this.phone,
     required this.address,
@@ -19,9 +22,10 @@ class Supplier {
     required this.branchId,
   });
 
+  // Factory constructor
   factory Supplier.fromJson(Map<String, dynamic> json) {
     return Supplier(
-      id: json['id'], // Tidak perlu cast karena sudah String
+      id: json['id'],
       name: json['name'],
       phone: json['phone'],
       address: json['address'],
@@ -32,9 +36,10 @@ class Supplier {
     );
   }
 
+  // Convert to JSON
   Map<String, dynamic> toJson() {
     return {
-      'id': id, // Tambahkan id di sini jika diperlukan
+      'id': id,
       'name': name,
       'phone': phone,
       'address': address,

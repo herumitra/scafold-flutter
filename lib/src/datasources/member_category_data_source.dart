@@ -1,74 +1,68 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import '../models/supplier_category.dart';
+import '../models/member_category.dart';
 
-// initialize the Supplier Category Data Source
-class SupplierCategoryDataSource extends DataGridSource {
-  SupplierCategoryDataSource({
-    required List<SupplierCategory> supplierCategories,
+// initialize the Member Category Data Source
+class MemberCategoryDataSource extends DataGridSource {
+  MemberCategoryDataSource({
+    required List<MemberCategory> memberCategories,
     required this.onEdit,
     required this.onDelete,
   }) {
-    _supplierCategories =
-        supplierCategories
+    _memberCategories =
+        memberCategories
             .map<DataGridRow>(
-              (supplierCategory) => DataGridRow(
+              (memberCategory) => DataGridRow(
                 cells: [
-                  DataGridCell<int>(
-                    columnName: 'id',
-                    value: supplierCategory.id,
-                  ),
+                  DataGridCell<int>(columnName: 'id', value: memberCategory.id),
                   DataGridCell<String>(
                     columnName: 'name',
-                    value: supplierCategory.name,
+                    value: memberCategory.name,
                   ),
                   DataGridCell<Widget>(
                     columnName: 'actions',
-                    value: _buildActionButtons(supplierCategory),
+                    value: _buildActionButtons(memberCategory),
                   ),
                 ],
               ),
             )
             .toList();
   }
-  Widget _buildActionButtons(SupplierCategory supplierCategory) {
+  Widget _buildActionButtons(MemberCategory memberCategory) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
           icon: const Icon(Icons.edit, color: Colors.blue),
-          onPressed: () => onEdit(supplierCategory: supplierCategory),
+          onPressed: () => onEdit(memberCategory: memberCategory),
         ),
         IconButton(
           icon: const Icon(Icons.delete, color: Colors.red),
-          onPressed: () => onDelete(supplierCategory.id),
+          onPressed: () => onDelete(memberCategory.id),
         ),
       ],
     );
   }
 
-  List<DataGridRow> _supplierCategories = [];
+  List<DataGridRow> _memberCategories = [];
 
-  final Function({SupplierCategory? supplierCategory}) onEdit;
+  final Function({MemberCategory? memberCategory}) onEdit;
   final Function(int) onDelete;
 
-  void updateData(List<SupplierCategory> newSupplierCategories) {
-    _supplierCategories =
-        newSupplierCategories
+  void updateData(List<MemberCategory> newMemberCategories) {
+    _memberCategories =
+        newMemberCategories
             .map<DataGridRow>(
-              (supplierCategory) => DataGridRow(
+              (memberCategory) => DataGridRow(
                 cells: [
-                  DataGridCell<int>(
-                    columnName: 'id',
-                    value: supplierCategory.id,
-                  ),
+                  DataGridCell<int>(columnName: 'id', value: memberCategory.id),
                   DataGridCell<String>(
                     columnName: 'name',
-                    value: supplierCategory.name,
+                    value: memberCategory.name,
                   ),
                   DataGridCell<Widget>(
                     columnName: 'actions',
-                    value: _buildActionButtons(supplierCategory),
+                    value: _buildActionButtons(memberCategory),
                   ),
                 ],
               ),
@@ -78,7 +72,7 @@ class SupplierCategoryDataSource extends DataGridSource {
   }
 
   @override
-  List<DataGridRow> get rows => _supplierCategories;
+  List<DataGridRow> get rows => _memberCategories;
 
   @override
   DataGridRowAdapter? buildRow(DataGridRow row) {

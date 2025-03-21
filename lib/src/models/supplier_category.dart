@@ -1,24 +1,19 @@
+// Initialize the Supplier Category class
 class SupplierCategory {
+  // Define the properties
   final int id;
   final String name;
-  final String branchId;
 
-  SupplierCategory({
-    required this.id,
-    required this.name,
-    required this.branchId,
-  });
+  // Constructor
+  SupplierCategory({required this.id, required this.name});
 
+  // Factory constructor
   factory SupplierCategory.fromJson(Map<String, dynamic> json) {
-    return SupplierCategory(
-      id: json['id'], // Pastikan ini int
-      name: json['name'] ?? '',
-      branchId: json['branch_id'] ?? '',
-    );
+    return SupplierCategory(id: json['id'], name: json['name']);
   }
 
-  @override
-  String toString() {
-    return 'SupplierCategory(id: $id, name: $name, branchId: $branchId)';
+  // Convert to JSON
+  Map<String, dynamic> toJson() {
+    return {'id': id, 'name': name};
   }
 }
