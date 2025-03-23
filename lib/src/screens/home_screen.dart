@@ -6,7 +6,7 @@ import '../widgets/custom_menu.dart';
 import '../items/dashboard_item.dart';
 import '../items/transaksi_pembelian_item.dart';
 import '../items/transaksi_penjualan_item.dart';
-import '../items/transaksi_penerimaan_item.dart';
+// import '../items/transaksi_penerimaan_item.dart';
 import '../items/transaksi_retur_pembelian_item.dart';
 import '../items/transaksi_retur_penjualan_item.dart';
 import '../items/laporan_penjualan_item.dart';
@@ -130,8 +130,8 @@ class _HomeScreenState extends State<HomeScreen> {
         return TransaksiPembelianItem();
       case 'Penjualan':
         return TransaksiPenjualanItem();
-      case 'Penerimaan':
-        return TransaksiPenerimaanItem();
+      // case 'Penerimaan':
+      //   return TransaksiPenerimaanItem();
       case 'Retur Pembelian':
         return TransaksiReturPembelianItem();
       case 'Retur Penjualan':

@@ -78,7 +78,7 @@ class _CustomMenuState extends State<CustomMenu> {
         _buildMenuItem('Penjualan', HugeIcons.strokeRoundedCashier02),
         _buildMenuItem('Retur Penjualan', HugeIcons.strokeRoundedFolderSync),
         _buildMenuItem('Pembelian', HugeIcons.strokeRoundedCalendarAdd02),
-        _buildMenuItem('Penerimaan', HugeIcons.strokeRoundedCalendarCheckIn01),
+        // _buildMenuItem('Penerimaan', HugeIcons.strokeRoundedCalendarCheckIn01),
         _buildMenuItem(
           'Retur Pembelian',
           HugeIcons.strokeRoundedCalendarCheckOut01,
