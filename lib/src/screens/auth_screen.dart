@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:secure_application/secure_application.dart';
 import 'package:page_transition/page_transition.dart';
 import '../utils/constants.dart';
+import '../utils/api_config.dart';
 import '../screens/branches_list.dart';
 
 class AuthScreen extends StatelessWidget {
@@ -119,7 +120,7 @@ class AuthScreen extends StatelessWidget {
     try {
       final dio = Dio();
       final response = await dio.post(
-        'http://api.vimedika.com:4001/login',
+        ApiConfig.login_endpoint,
         data: {"username": data.email, "password": data.password},
         options: Options(headers: {"Content-Type": "application/json"}),
       );
@@ -145,7 +146,7 @@ class AuthScreen extends StatelessWidget {
     try {
       final dio = Dio();
       final response = await dio.get(
-        'http://vimedika.com:4001/list_branches',
+        ApiConfig.list_branch_endpoint,
         options: Options(headers: {"Authorization": "Bearer $token"}),
       );
       if (response.statusCode == 200) {

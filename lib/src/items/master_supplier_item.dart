@@ -4,7 +4,7 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import '../models/supplier.dart';
 import '../services/supplier_service.dart';
 import '../utils/constants.dart';
-import '../datasources/supplier_data_source.dart';
+import '../datasources/supplier_datasource.dart';
 import '../widgets/forms_widget.dart';
 
 class MasterSupplierItem extends StatefulWidget {

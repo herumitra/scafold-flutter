@@ -6,7 +6,7 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ViApp());
 
   // Atur agar aplikasi langsung fullscreen saat dijalankan
   doWhenWindowReady(() {
@@ -16,8 +16,8 @@ void main() {
   });
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class ViApp extends StatelessWidget {
+  const ViApp({super.key});
 
   @override
   Widget build(BuildContext context) {

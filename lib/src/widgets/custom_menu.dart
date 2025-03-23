@@ -33,12 +33,12 @@ class _CustomMenuState extends State<CustomMenu> {
         selectedHoverColor: ViColors.hoverMenu,
         selectedColor: ViColors.mainDefault,
         unselectedIconColor: ViColors.mainDefault,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(15),
-            bottomLeft: Radius.circular(15),
-          ),
-        ),
+        // decoration: BoxDecoration(
+        //   borderRadius: BorderRadius.only(
+        //     topLeft: Radius.circular(15),
+        //     bottomLeft: Radius.circular(15),
+        //   ),
+        // ),
         selectedTitleTextStyle: ViDefaultFont.copyWith(
           fontSize: ViSize.defaultFontSize,
           fontWeight: FontWeight.bold,

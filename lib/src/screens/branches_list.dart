@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:secure_application/secure_application.dart';
 import 'package:clay_containers/clay_containers.dart';
@@ -5,6 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:page_transition/page_transition.dart';
 import '../utils/constants.dart'; // Import ViColors
+import '../utils/api_config.dart';
 import 'home_screen.dart'; // Import HomeScreen
 
 class BranchesScreen extends StatelessWidget {
@@ -72,9 +75,15 @@ class _HoverableBranchItemState extends State<HoverableBranchItem> {
       bool confirm = await _showConfirmationDialog(context);
       if (!confirm) return;
 
+      if (widget.branch['branch_id'] == null ||
+          widget.branch['branch_id'].isEmpty) {
+        _showErrorDialog(context, 'Cabang tidak valid.');
+        return;
+      }
+
       final dio = Dio();
       final response = await dio.post(
-        'http://api.vimedika.com:4001/set_branch',
+        ApiConfig.set_branch_endpoint,
         data: {"branch_id": widget.branch['branch_id']},
         options: Options(
           headers: {"Authorization": "Bearer $token"},
@@ -82,10 +91,16 @@ class _HoverableBranchItemState extends State<HoverableBranchItem> {
         ),
       );
 
-      // debugPrint("Response set_branch: ${response.data}");
+      // Tambahkan debug log untuk melihat isi response
+      debugPrint("🔹 Response Data: ${response.data}");
 
       if (response.statusCode == 200 && response.data['status'] == 'success') {
         final newToken = response.data['data'];
+
+        if (newToken is! String || newToken.isEmpty) {
+          _showErrorDialog(context, 'Token baru tidak valid.');
+          return;
+        }
 
         await prefs.setString('tokenJWT', newToken);
         await _fetchProfile(context, newToken);
@@ -96,7 +111,7 @@ class _HoverableBranchItemState extends State<HoverableBranchItem> {
         );
       }
     } catch (e) {
-      // debugPrint("Error set_branch: $e");
+      debugPrint("❌ Error set_branch: $e");
       _showErrorDialog(context, 'Terjadi kesalahan, coba lagi.');
     }
   }
@@ -105,20 +120,18 @@ class _HoverableBranchItemState extends State<HoverableBranchItem> {
     try {
       final dio = Dio();
       final response = await dio.get(
-        'http://api.vimedika.com:4001/profile',
+        ApiConfig.profile_endpoint,
         options: Options(
           headers: {"Authorization": "Bearer $newToken"},
           validateStatus: (status) => status! < 500,
         ),
       );
 
-      // debugPrint("Response profile: ${response.data}");
-
       if (response.statusCode == 200 && response.data['status'] == 'success') {
         final profileData = response.data['data'];
-
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('profileData', profileData.toString());
+        // await prefs.setString('profileData', profileData.toString());
+        await prefs.setString('profileData', jsonEncode(profileData));
 
         Navigator.pushReplacement(
           context,
@@ -132,8 +145,7 @@ class _HoverableBranchItemState extends State<HoverableBranchItem> {
         _showErrorDialog(context, 'Gagal mengambil data profil.');
       }
     } catch (e) {
-      // debugPrint("Error profile: $e");
-
+      debugPrint("Error profile: $e");
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('profileData');
 

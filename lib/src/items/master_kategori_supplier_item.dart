@@ -5,7 +5,7 @@ import '../utils/constants.dart';
 import '../widgets/forms_widget.dart';
 import '../models/supplier_category.dart';
 import '../services/supplier_category_service.dart';
-import '../datasources/supplier_category_data_source.dart';
+import '../datasources/supplier_category_datasource.dart';
 
 class MasterKategoriSupplierItem extends StatefulWidget {
   const MasterKategoriSupplierItem({super.key});
