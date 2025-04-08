@@ -2,7 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiConfig {
   // URL API
-  static const String baseUrl = "http://api.vimedika.com:4002";
+  static const String baseUrl = "http://api.vimedika.com:4001";
 
   // URL API Auth
   static const String baseUrlAuth = "http://api.vimedika.com:4001";
